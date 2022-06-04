@@ -11,7 +11,10 @@ buildscript {
 }
 plugins {
     id 'com.github.johnrengelman.shadow' version '7.0.0'
+    id "com.modrinth.minotaur" version "2.+"
+    id "me.hypherionmc.cursegradle" version "2.0.1"
 }
+
 apply plugin: 'java'
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
@@ -129,4 +132,46 @@ publishing {
             url "file://" + System.getenv("local_maven")
         }
     }
+}
+
+modrinth {
+    debugMode = false
+    token = System.getenv("MODRINTH_TOKEN")
+    projectId = "QOkEkSap"
+    versionNumber = project.version
+    versionType = "release"
+    uploadFile = jar
+    versionName = "[FORGE] Maintenance Mode 1.18.x - " + project.version
+    gameVersions = ["1.18.1", "1.18.2"]
+    loaders = [ "forge" ]
+}
+
+curseforge {
+    if (System.getenv("CURSE_TOKEN") !== null) {
+        apiKey = System.getenv("CURSE_TOKEN")
+    } else {
+        apiKey = ""
+    }
+    project {
+        id = "630716"
+        releaseType = "release"
+        addGameVersion "1.18.2"
+        addGameVersion "1.18.1"
+        addGameVersion "Fabric"
+        addGameVersion "Java 17"
+        changelogType = "markdown"
+        changelog = "**Coming Soon**"
+        mainArtifact(jar) {
+            displayName = "[Forge] Maintenance Mode 1.18.x - $project.version"
+        }
+    }
+    options {
+        forgeGradleIntegration = false
+        debug = false
+        fabricIntegration = false
+    }
+}
+
+afterEvaluate {
+    tasks.curseforge630716.dependsOn reobfShadowJar
 }
