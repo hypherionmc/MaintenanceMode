@@ -4,9 +4,9 @@ import com.mojang.brigadier.CommandDispatcher;
 import me.hypherionmc.mmode.commands.MaintenanceModeCommand;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraftforge.event.RegisterCommandsEvent;
-import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fmlserverevents.FMLServerAboutToStartEvent;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ServerEvents {
@@ -18,7 +18,7 @@ public class ServerEvents {
     }
 
     @SubscribeEvent
-    public void serverStartedEvent(ServerAboutToStartEvent event) {
+    public void serverStartedEvent(FMLServerAboutToStartEvent event) {
         CommonClass.init(event.getServer());
     }
 }

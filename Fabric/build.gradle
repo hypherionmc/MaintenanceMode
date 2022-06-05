@@ -93,9 +93,9 @@ publishing {
         versionNumber = project.version + "f"
         versionType = "release"
         uploadFile = remapJar
-        versionName = "[FABRIC/QUILT] Maintenance Mode 1.18.x - " + project.version
-        gameVersions = ["1.18.1", "1.18.2"]
-        loaders = [ "fabric", "quilt" ]
+        versionName = "[FABRIC] Maintenance Mode 1.17.1 - " + project.version
+        gameVersions = ["1.17.1"]
+        loaders = [ "fabric" ]
         dependencies {
             required.project "P7dR8mSH"
         }
@@ -110,14 +110,13 @@ publishing {
         project {
             id = "630716"
             releaseType = "release"
-            addGameVersion "1.18.2"
-            addGameVersion "1.18.1"
+            addGameVersion "1.17.1"
             addGameVersion "Fabric"
-            addGameVersion "Java 17"
+            addGameVersion "Java 16"
             changelogType = "markdown"
             changelog = "**Coming Soon**"
             mainArtifact(remapJar) {
-                displayName = "[Fabric/Quilt] Maintenance Mode 1.18.x - $project.version"
+                displayName = "[Fabric/Quilt] Maintenance Mode 1.17.1 - $project.version"
             }
             relations {
                 requiredDependency 'fabric-api'
