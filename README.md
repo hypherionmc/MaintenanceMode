@@ -7,7 +7,7 @@ Put your server in maintenance mode!
 ---
 
 ### Credits
-* Project made with [MultiLoaderTemplate](github.com/jaredlll08/multiLoader-Template/)
+* Project made with [MultiLoaderTemplate](https://github.com/jaredlll08/multiLoader-Template/)
 
 ---
 ### License
