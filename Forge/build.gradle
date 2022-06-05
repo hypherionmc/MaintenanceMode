@@ -1,37 +1,32 @@
 buildscript {
     repositories {
-        maven { url = 'https://maven.minecraftforge.net' }
+        maven { url = 'https://maven.minecraftforge.net/' }
         maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
         mavenCentral()
+        gradlePluginPortal()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath 'net.minecraftforge.gradle:ForgeGradle:4.+'
         classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
     }
 }
 plugins {
-    id 'com.github.johnrengelman.shadow' version '7.0.0'
-    id "com.modrinth.minotaur" version "2.+"
+    id 'com.github.johnrengelman.shadow' version '4.0.4'
+    id "com.modrinth.minotaur" version "2.2.0"
     id "me.hypherionmc.cursegradle" version "2.0.1"
+    id "signing"
 }
-
-apply plugin: 'java'
 apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'eclipse'
+apply plugin: 'java'
 apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'maven-publish'
 
 archivesBaseName = "${mod_name}-forge-${minecraft_version}"
-
-mixin {
-    add sourceSets.main, "${mod_id}.refmap.json"
-
-    config "${mod_id}.mixins.json"
-    config "${mod_id}.forge.mixins.json"
-}
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
 
 minecraft {
-    mappings channel: 'official', version: minecraft_version
+    mappings channel: 'stable', version: '39-1.12'
 
     if (project.hasProperty('forge_ats_enabled') && project.findProperty('forge_ats_enabled').toBoolean()) {
         // This location is hardcoded in Forge and can not be changed.
@@ -45,11 +40,12 @@ minecraft {
             workingDirectory project.file('run')
             ideaModule "${rootProject.name}.${project.name}.main"
             taskName 'Client'
-            args "-mixin.config=${mod_id}.mixins.json", "-mixin.config=${mod_id}.forge.mixins.json"
+            property 'fml.coreMods.load', mod_core_plugin.replace('${mod_group}', group).replace('${mod_id}', mod_id)
+            //args "-mixin.config=${mod_id}.forge.mixins.json"
             mods {
                 modClientRun {
                     source sourceSets.main
-                    source project(":Common").sourceSets.main
+                    //source project(":Common").sourceSets.main
                 }
             }
         }
@@ -58,11 +54,12 @@ minecraft {
             workingDirectory project.file('run')
             ideaModule "${rootProject.name}.${project.name}.main"
             taskName 'Server'
-            args "-mixin.config=${mod_id}.mixins.json", "-mixin.config=${mod_id}.forge.mixins.json"
+            property 'fml.coreMods.load', mod_core_plugin.replace('${mod_group}', group).replace('${mod_id}', mod_id)
+            //args "-mixin.config=${mod_id}.forge.mixins.json"
             mods {
                 modServerRun {
                     source sourceSets.main
-                    source project(":Common").sourceSets.main
+                    //source project(":Common").sourceSets.main
                 }
             }
         }
@@ -72,11 +69,11 @@ minecraft {
             ideaModule "${rootProject.name}.${project.name}.main"
             args '--mod', mod_id, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
             taskName 'Data'
-            args "-mixin.config=${mod_id}.mixins.json", "-mixin.config=${mod_id}.forge.mixins.json"
+            //args "-mixin.config=${mod_id}.forge.mixins.json"
             mods {
                 modDataRun {
                     source sourceSets.main
-                    source project(":Common").sourceSets.main
+                    //source project(":Common").sourceSets.main
                 }
             }
         }
@@ -85,20 +82,24 @@ minecraft {
 
 sourceSets.main.resources.srcDir 'src/generated/resources'
 
+configurations {
+    embed
+    compile.extendsFrom(embed)
+}
+
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
-    compileOnly project(":Common")
-    annotationProcessor 'org.spongepowered:mixin:0.8.4-SNAPSHOT:processor'
+    //compileOnly project(":Common")
+    annotationProcessor 'org.spongepowered:mixin:0.8.3-SNAPSHOT:processor'
+    embed('org.spongepowered:mixin:0.8.3-SNAPSHOT') {
+        exclude module: 'guava'
+        exclude module: 'commons-io'
+        exclude module: 'gson'
+    }
     implementation('org.apache.commons:commons-compress:1.21')
 }
 
-tasks.withType(JavaCompile) {
-    source(project(":Common").sourceSets.main.allSource)
-}
-
 processResources {
-    from project(":Common").sourceSets.main.resources
-
     filesMatching('*.mixins.json') {
         expand "refmap_target": "${mod_id}."
     }
@@ -108,6 +109,7 @@ reobf {
     shadowJar {
         dependencies {
             include(dependency('org.apache.commons:commons-compress:1.21'))
+            include(dependency('org.spongepowered:mixin'))
         }
 
         relocate "org.apache.commons", "shadow.apache.commons"
@@ -117,6 +119,20 @@ reobf {
 
 build.dependsOn reobfShadowJar
 jar.finalizedBy('reobfJar')
+
+mixin {
+    add sourceSets.main, "${mod_id}.refmap.json"
+    config "${mod_id}.forge.mixins.json"
+}
+
+task copyAllArtifacts(type: Copy) {
+    from "$buildDir/libs"
+    into "$rootDir/artifacts"
+    include("*.jar")
+    delete("$rootDir/artifacts/*-common-*.jar")
+}
+
+build.finalizedBy copyAllArtifacts
 
 publishing {
     publications {
@@ -141,13 +157,13 @@ modrinth {
     versionNumber = "${minecraft_version}-${project.version}"
     versionType = "release"
     uploadFile = jar
-    versionName = "[FORGE] Maintenance Mode 1.16.5 - " + project.version
-    gameVersions = ["1.16.5"]
+    versionName = "[FORGE] Maintenance Mode 1.12.2 - " + project.version
+    gameVersions = ["1.12.2"]
     loaders = [ "forge" ]
 }
 
 curseforge {
-    if (System.getenv("CURSE_TOKEN") !== null) {
+    if (System.getenv("CURSE_TOKEN") != null) {
         apiKey = System.getenv("CURSE_TOKEN")
     } else {
         apiKey = ""
@@ -155,19 +171,18 @@ curseforge {
     project {
         id = "630716"
         releaseType = "release"
-        addGameVersion "1.16.5"
+        addGameVersion "1.12.2"
         addGameVersion "Forge"
         addGameVersion "Java 8"
         changelogType = "markdown"
         changelog = "**Coming Soon**"
         mainArtifact(jar) {
-            displayName = "[Forge] Maintenance Mode 1.16.5 - $project.version"
+            displayName = "[Forge] Maintenance Mode 1.12.2 - $project.version"
         }
     }
     options {
         forgeGradleIntegration = false
         debug = false
-        fabricIntegration = false
     }
 }
 

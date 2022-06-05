@@ -1,16 +1,20 @@
 package me.hypherionmc.mmode;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.DistExecutor;
+import me.hypherionmc.mmode.commands.CommandMaintenanceMode;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 
-@Mod(ModConstants.MOD_ID)
+@Mod(modid = ModConstants.MOD_ID, serverSideOnly = true, acceptableRemoteVersions = "*")
 public class MaintenanceMode {
 
-    public MaintenanceMode() {
-        DistExecutor.unsafeRunWhenOn(Dist.DEDICATED_SERVER, () -> () -> {
-            MinecraftForge.EVENT_BUS.register(new ServerEvents());
-        });
+    @Mod.EventHandler
+    public void serverStartedEvent(FMLServerAboutToStartEvent event) {
+        CommonClass.init(event.getServer());
+    }
+
+    @Mod.EventHandler
+    public void serverLoad(FMLServerStartingEvent event) {
+        event.registerServerCommand(new CommandMaintenanceMode());
     }
 }

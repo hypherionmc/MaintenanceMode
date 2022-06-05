@@ -2,7 +2,7 @@ subprojects {
 
     apply plugin: 'java'
 
-    java.toolchain.languageVersion = JavaLanguageVersion.of(8)
+    //java.toolchain.languageVersion = JavaLanguageVersion.of(8)
 
     def version_base = "${version}"
 
@@ -29,7 +29,13 @@ subprojects {
                 'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
                 'Timestampe'              : System.currentTimeMillis(),
                 'Built-On-Java'           : "${System.getProperty('java.vm.version')} (${System.getProperty('java.vm.vendor')})",
-                'Build-On-Minecraft'      : minecraft_version
+                'Build-On-Minecraft'      : minecraft_version,
+                "FMLCorePlugin": mod_core_plugin.replace('${mod_group}', group).replace('${mod_id}', mod_id),
+                "FMLCorePluginContainsFMLMod": "false",
+                "ForceLoadAsMod": "true",
+                "TweakClass": "org.spongepowered.asm.launch.MixinTweaker",
+                "TweakOrder": "0",
+                "MixinConfigs": "mmode.forge.mixins.json"
             ])
         }
     }
@@ -49,18 +55,10 @@ subprojects {
         }
     }
 
-
-    tasks.withType(JavaCompile).configureEach {
-
-        it.options.encoding = 'UTF-8'
-        //it.options.release = 8
-    }
-
     // Disables Gradle's custom module metadata from being published to maven. The
     // metadata includes mapped dependencies which are not reasonably consumable by
     // other mod developers.
     tasks.withType(GenerateModuleMetadata) {
-
         enabled = false
     }
 
@@ -68,16 +66,5 @@ subprojects {
         delete "$buildDir/libs"
         delete "$rootDir/artifacts"
     }
-
-    task copyAllArtifacts(type: Copy) {
-        if (project.name !== "Common") {
-            from "$buildDir/libs"
-            into "$rootDir/artifacts"
-            include("*.jar")
-            delete("$rootDir/artifacts/*-common-*.jar")
-        }
-    }
-
-    build.finalizedBy(copyAllArtifacts)
 
 }

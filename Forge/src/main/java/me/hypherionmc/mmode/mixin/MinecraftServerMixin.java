@@ -4,7 +4,7 @@ import me.hypherionmc.mmode.CommonClass;
 import me.hypherionmc.mmode.config.objects.MaintenanceModeConfig;
 import net.minecraft.network.ServerStatusResponse;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextComponentString;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -16,12 +16,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MinecraftServerMixin {
 
     @Final
-    @Shadow private ServerStatusResponse status;
+    @Shadow private ServerStatusResponse statusResponse;
 
     @Shadow private String motd;
-    private String lastMessage = "";
 
-    @Inject(method = "runServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/profiler/IProfiler;startTick()V"))
+    @Inject(method = "run", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;getCurrentTimeMillis()J"))
     public void runServer(CallbackInfo ci) {
         // Check if server is in maintenance mode and update MOTD
         MaintenanceModeConfig config = CommonClass.config;
@@ -33,13 +32,9 @@ public class MinecraftServerMixin {
 
         // Use a "cache" to prevent unnecessary updates
         if (config.isEnabled()) {
-            if (!this.lastMessage.equals(message)) {
-                status.setDescription(new StringTextComponent(message));
-                this.lastMessage = message;
-            }
-        } else if (this.motd != null && !lastMessage.equals(this.motd)) {
-            status.setDescription(new StringTextComponent(this.motd));
-            this.lastMessage = this.motd;
+            statusResponse.setServerDescription(new TextComponentString(message));
+        } else if (this.motd != null) {
+            statusResponse.setServerDescription(new TextComponentString(this.motd));
         }
     }
 

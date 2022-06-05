@@ -1,0 +1,17 @@
+[
+  {
+    "modid": "mmode",
+    "name": "Maintenance Mode",
+    "description": "Put your server in maintenance mode, while giving only specific people access. Useful for doing work on servers without having people join!",
+    "version": "${file.jarVersion}",
+    "mcversion": "1.12.2",
+    "url": "https://hypherionmc.me",
+    "authorList": [
+      "HypherionSA"
+    ],
+    "credits": "",
+    "logoFile": "mmode_icon.png",
+    "screenshots": [],
+    "dependencies": []
+  }
+]
