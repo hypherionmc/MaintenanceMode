@@ -157,7 +157,7 @@ curseforge {
         releaseType = "release"
         addGameVersion "1.18.2"
         addGameVersion "1.18.1"
-        addGameVersion "Fabric"
+        addGameVersion "Forge"
         addGameVersion "Java 17"
         changelogType = "markdown"
         changelog = "**Coming Soon**"
