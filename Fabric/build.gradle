@@ -90,7 +90,7 @@ publishing {
         debugMode = false
         token = System.getenv("MODRINTH_TOKEN")
         projectId = "QOkEkSap"
-        versionNumber = project.version + "f"
+        versionNumber = "${minecraft_version}-${project.version}f"
         versionType = "release"
         uploadFile = remapJar
         versionName = "[FABRIC] Maintenance Mode 1.17.1 - " + project.version
