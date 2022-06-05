@@ -141,8 +141,8 @@ modrinth {
     versionNumber = "${minecraft_version}-${project.version}"
     versionType = "release"
     uploadFile = jar
-    versionName = "[FORGE] Maintenance Mode 1.17.1 - " + project.version
-    gameVersions = ["1.17.1"]
+    versionName = "[FORGE] Maintenance Mode 1.16.5 - " + project.version
+    gameVersions = ["1.16.5"]
     loaders = [ "forge" ]
 }
 
@@ -155,13 +155,13 @@ curseforge {
     project {
         id = "630716"
         releaseType = "release"
-        addGameVersion "1.17.1"
+        addGameVersion "1.16.5"
         addGameVersion "Forge"
-        addGameVersion "Java 16"
+        addGameVersion "Java 8"
         changelogType = "markdown"
         changelog = "**Coming Soon**"
         mainArtifact(jar) {
-            displayName = "[Forge] Maintenance Mode 1.17.1 - $project.version"
+            displayName = "[Forge] Maintenance Mode 1.16.5 - $project.version"
         }
     }
     options {

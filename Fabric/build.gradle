@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '0.10-SNAPSHOT'
+    id 'fabric-loom' version '0.7-SNAPSHOT'
     id 'maven-publish'
     id 'idea'
     id "com.modrinth.minotaur" version "2.+"
@@ -75,61 +75,61 @@ publishing {
             url "file://" + System.getenv("local_maven")
         }
     }
+}
 
-    task delDevJar {
-        doLast {
-            def tree = fileTree("build/libs")
-            tree.include '**/*-dev.jar'
-            tree.each { it.delete() }
+task delDevJar {
+    doLast {
+        def tree = fileTree("build/libs")
+        tree.include '**/*-dev.jar'
+        tree.each { it.delete() }
+    }
+}
+
+build.finalizedBy delDevJar
+
+modrinth {
+    debugMode = false
+    token = System.getenv("MODRINTH_TOKEN")
+    projectId = "QOkEkSap"
+    versionNumber = "${minecraft_version}-${project.version}f"
+    versionType = "release"
+    uploadFile = remapJar
+    versionName = "[FABRIC] Maintenance Mode 1.16.5 - " + project.version
+    gameVersions = ["1.16.5"]
+    loaders = [ "fabric" ]
+    dependencies {
+        required.project "P7dR8mSH"
+    }
+}
+
+curseforge {
+    if (System.getenv("CURSE_TOKEN") !== null) {
+        apiKey = System.getenv("CURSE_TOKEN")
+    } else {
+        apiKey = ""
+    }
+    project {
+        id = "630716"
+        releaseType = "release"
+        addGameVersion "1.16.5"
+        addGameVersion "Fabric"
+        addGameVersion "Java 8"
+        changelogType = "markdown"
+        changelog = "**Coming Soon**"
+        mainArtifact(remapJar) {
+            displayName = "[Fabric] Maintenance Mode 1.16.5 - $project.version"
+        }
+        relations {
+            requiredDependency 'fabric-api'
         }
     }
-
-    build.finalizedBy delDevJar
-
-    modrinth {
-        debugMode = false
-        token = System.getenv("MODRINTH_TOKEN")
-        projectId = "QOkEkSap"
-        versionNumber = "${minecraft_version}-${project.version}f"
-        versionType = "release"
-        uploadFile = remapJar
-        versionName = "[FABRIC] Maintenance Mode 1.17.1 - " + project.version
-        gameVersions = ["1.17.1"]
-        loaders = [ "fabric" ]
-        dependencies {
-            required.project "P7dR8mSH"
-        }
+    options {
+        forgeGradleIntegration = false
+        debug = false
+        fabricIntegration = false
     }
+}
 
-    curseforge {
-        if (System.getenv("CURSE_TOKEN") !== null) {
-            apiKey = System.getenv("CURSE_TOKEN")
-        } else {
-            apiKey = ""
-        }
-        project {
-            id = "630716"
-            releaseType = "release"
-            addGameVersion "1.17.1"
-            addGameVersion "Fabric"
-            addGameVersion "Java 16"
-            changelogType = "markdown"
-            changelog = "**Coming Soon**"
-            mainArtifact(remapJar) {
-                displayName = "[Fabric/Quilt] Maintenance Mode 1.17.1 - $project.version"
-            }
-            relations {
-                requiredDependency 'fabric-api'
-            }
-        }
-        options {
-            forgeGradleIntegration = false
-            debug = false
-            fabricIntegration = false
-        }
-    }
-
-    afterEvaluate {
-        tasks.curseforge630716.dependsOn remapJar
-    }
+afterEvaluate {
+    tasks.curseforge630716.dependsOn remapJar
 }

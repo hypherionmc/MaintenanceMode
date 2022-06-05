@@ -2,7 +2,7 @@ subprojects {
 
     apply plugin: 'java'
 
-    java.toolchain.languageVersion = JavaLanguageVersion.of(16)
+    java.toolchain.languageVersion = JavaLanguageVersion.of(8)
 
     def version_base = "${version}"
 
@@ -53,7 +53,7 @@ subprojects {
     tasks.withType(JavaCompile).configureEach {
 
         it.options.encoding = 'UTF-8'
-        it.options.release = 16
+        //it.options.release = 8
     }
 
     // Disables Gradle's custom module metadata from being published to maven. The

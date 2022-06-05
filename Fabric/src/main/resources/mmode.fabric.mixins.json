@@ -2,12 +2,14 @@
   "required": true,
   "minVersion": "0.8",
   "package": "me.hypherionmc.mmode.mixin",
-  "compatibilityLevel": "JAVA_16",
+  "compatibilityLevel": "JAVA_8",
   "mixins": [
   ],
   "client": [
   ],
   "server": [
+    "MinecraftServerMixin",
+    "PlayerListMixin"
   ],
   "injectors": {
     "defaultRequire": 1
