@@ -14,8 +14,7 @@ import me.hypherionmc.mmode.util.BackupUtil;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.GameProfileArgument;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -58,7 +57,7 @@ public class MaintenanceModeCommand {
             BackupUtil.createBackup();
         } catch (Exception e) {
             ModConstants.LOG.error("Failed to create server backup: {}", e.getMessage());
-            source.sendFailure(new TextComponent("Failed to create Server backup. Please check your server log"));
+            source.sendFailure(Component.literal("Failed to create Server backup. Please check your server log"));
         }
         return 1;
     }
@@ -72,16 +71,16 @@ public class MaintenanceModeCommand {
         config.setDoBackup(enabled);
         saveConfig(config, stack);
 
-        stack.sendSuccess(new TextComponent("Do Backups Mode: " + enabled), true);
+        stack.sendSuccess(Component.literal("Do Backups Mode: " + enabled), true);
 
         return 1;
     }
 
     private static int checkStatus(CommandSourceStack stack) {
         if (CommonClass.config != null) {
-            stack.sendSuccess(new TextComponent("Maintenance Mode: " + CommonClass.config.isEnabled()), true);
+            stack.sendSuccess(Component.literal("Maintenance Mode: " + CommonClass.config.isEnabled()), true);
         } else {
-            stack.sendFailure(new TextComponent("Maintenance Mode: Failed to load config"));
+            stack.sendFailure(Component.literal("Maintenance Mode: Failed to load config"));
         }
         return 1;
     }
@@ -95,9 +94,9 @@ public class MaintenanceModeCommand {
         String[] names = config.getAllowedUsers().stream().map(MaintenanceModeConfig.AllowedUser::getName).toArray(String[]::new);
 
         if (names.length == 0) {
-            stack.sendSuccess(new TranslatableComponent("No users are allowed to join"), false);
+            stack.sendSuccess(Component.literal("No users are allowed to join"), false);
         } else {
-            stack.sendSuccess(new TranslatableComponent("Allowed Users:", names.length, String.join(", ", names)), false);
+            stack.sendSuccess(Component.translatable("Allowed Users:", names.length, String.join(", ", names)), false);
         }
 
         return names.length;
@@ -126,18 +125,18 @@ public class MaintenanceModeCommand {
 
             }
         } catch (Exception e) {
-            stack.sendFailure(new TextComponent("Failed to save config. Please see server log"));
+            stack.sendFailure(Component.literal("Failed to save config. Please see server log"));
             ModConstants.LOG.error("Failed to save config: {}", e.getMessage());
         }
 
-        stack.sendSuccess(new TextComponent("Maintenance mode: " + enabled), true);
+        stack.sendSuccess(Component.literal("Maintenance mode: " + enabled), true);
 
         return 1;
     }
 
     private static int reload(CommandSourceStack stack) {
         CommonClass.config = ConfigController.loadConfig();
-        stack.sendSuccess(new TextComponent("Config Reloaded"), true);
+        stack.sendSuccess(Component.literal("Config Reloaded"), true);
         return 1;
     }
 
@@ -154,7 +153,7 @@ public class MaintenanceModeCommand {
                 MaintenanceModeConfig.AllowedUser allowedUser = new MaintenanceModeConfig.AllowedUser(profile.getName(), profile.getId());
                 allowedUsers.add(allowedUser);
             } else {
-                throw new SimpleCommandExceptionType(new TextComponent("User already in allowed list")).create();
+                throw new SimpleCommandExceptionType(Component.literal("User already in allowed list")).create();
             }
         }
 
@@ -178,7 +177,7 @@ public class MaintenanceModeCommand {
             if (allowedUserOptional.isPresent()) {
                 allowedUsers.remove(allowedUserOptional.get());
             } else {
-                throw new SimpleCommandExceptionType(new TextComponent("User not found in allowed list")).create();
+                throw new SimpleCommandExceptionType(Component.literal("User not found in allowed list")).create();
             }
         }
 
@@ -192,12 +191,12 @@ public class MaintenanceModeCommand {
         try {
             ConfigController.saveConfig(config);
         } catch (Exception e) {
-            stack.sendFailure(new TextComponent("Failed to save config. Please see server log"));
+            stack.sendFailure(Component.literal("Failed to save config. Please see server log"));
             ModConstants.LOG.error("Failed to save config: {}", e.getMessage());
         }
 
         CommonClass.config = ConfigController.loadConfig();
-        stack.sendSuccess(new TextComponent("Updated config"), true);
+        stack.sendSuccess(Component.literal("Updated config"), true);
     }
 
     private static int setMessage(CommandSourceStack stack, String message) {

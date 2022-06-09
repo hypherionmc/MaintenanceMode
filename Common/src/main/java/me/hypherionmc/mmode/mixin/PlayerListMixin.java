@@ -3,7 +3,6 @@ package me.hypherionmc.mmode.mixin;
 import com.mojang.authlib.GameProfile;
 import me.hypherionmc.mmode.CommonClass;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.players.PlayerList;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -24,7 +23,7 @@ public class PlayerListMixin {
                 if (message == null || message.isEmpty()) {
                     message = "Server is currently undergoing maintenance. Please try connecting again later";
                 }
-                cir.setReturnValue(new TextComponent(message));
+                cir.setReturnValue(Component.literal(message));
             }
         }
     }

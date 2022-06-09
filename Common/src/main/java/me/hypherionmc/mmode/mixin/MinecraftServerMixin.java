@@ -2,7 +2,7 @@ package me.hypherionmc.mmode.mixin;
 
 import me.hypherionmc.mmode.CommonClass;
 import me.hypherionmc.mmode.config.objects.MaintenanceModeConfig;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.status.ServerStatus;
 import net.minecraft.server.MinecraftServer;
 import org.spongepowered.asm.mixin.Final;
@@ -34,11 +34,11 @@ public class MinecraftServerMixin {
         // Use a "cache" to prevent unnecessary updates
         if (config.isEnabled()) {
             if (!this.lastMessage.equals(message)) {
-                status.setDescription(new TextComponent(message));
+                status.setDescription(Component.literal(message));
                 this.lastMessage = message;
             }
         } else if (this.motd != null && !lastMessage.equals(this.motd)) {
-            status.setDescription(new TextComponent(this.motd));
+            status.setDescription(Component.literal(this.motd));
             this.lastMessage = this.motd;
         }
     }

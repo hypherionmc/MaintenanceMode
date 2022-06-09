@@ -2,7 +2,7 @@ package me.hypherionmc.mmode;
 
 import me.hypherionmc.mmode.config.ConfigController;
 import me.hypherionmc.mmode.config.objects.MaintenanceModeConfig;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 
 public class CommonClass {
@@ -23,7 +23,7 @@ public class CommonClass {
         if (mcServer != null && config != null) {
             mcServer.getPlayerList().getPlayers().forEach(serverPlayer -> {
                 if (config.getAllowedUsers().stream().noneMatch(allowedUser -> allowedUser.getUuid().equals(serverPlayer.getUUID()))) {
-                    serverPlayer.connection.disconnect(new TextComponent("Server is currently undergoing maintenance"));
+                    serverPlayer.connection.disconnect(Component.literal("Server is currently undergoing maintenance"));
                 }
             });
         }
