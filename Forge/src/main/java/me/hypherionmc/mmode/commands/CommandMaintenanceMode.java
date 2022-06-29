@@ -31,13 +31,13 @@ public class CommandMaintenanceMode extends CommandBase {
 
     @Override
     public String getUsage(ICommandSender sender) {
-        return "/maintenance <on|off|status|list|addAllowed|removeAllowed|doBackups|setMessage|reload>";
+        return "/maintenance <on|off|status|list|addAllowed|removeAllowed|doBackups|setMessage|setMotd|reload>";
     }
 
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         if (args.length < 1) {
-            throw new WrongUsageException("/maintenance <on|off|status|list|addAllowed|removeAllowed|doBackups|setMessage|reload>", new Object[0]);
+            throw new WrongUsageException("/maintenance <on|off|status|list|addAllowed|removeAllowed|doBackups|setMessage|setMotd|reload>", new Object[0]);
         } else {
             if ("status".equals(args[0])) {
                 checkStatus(sender);
@@ -74,6 +74,17 @@ public class CommandMaintenanceMode extends CommandBase {
                     builder.append(args[i]).append(" ");
                 }
                 setMessage(sender, builder.toString());
+            }
+
+            if ("setMotd".equals(args[0])) {
+                if (args.length < 2) {
+                    throw new WrongUsageException("A message is required");
+                }
+                StringBuilder builder = new StringBuilder();
+                for (int i = 1; i < args.length; i++) {
+                    builder.append(args[i]).append(" ");
+                }
+                setMotd(sender, builder.toString());
             }
 
             if ("addAllowed".equals(args[0])) {
@@ -251,8 +262,18 @@ public class CommandMaintenanceMode extends CommandBase {
         saveConfig(config, stack);
     }
 
+    private void setMotd(ICommandSender stack, String message) {
+        MaintenanceModeConfig config = CommonClass.config;
+        if (config == null) {
+            config = new MaintenanceModeConfig();
+        }
+
+        config.setMotd(message);
+        saveConfig(config, stack);
+    }
+
     @Override
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
-        return getListOfStringsMatchingLastWord(args, new String[] {"on", "off", "status", "list", "addAllowed", "removeAllowed", "doBackups", "setMessage", "reload"});
+        return getListOfStringsMatchingLastWord(args, new String[] {"on", "off", "status", "list", "addAllowed", "removeAllowed", "doBackups", "setMessage", "setMotd", "reload"});
     }
 }
