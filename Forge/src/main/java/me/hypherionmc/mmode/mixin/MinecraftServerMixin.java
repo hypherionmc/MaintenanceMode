@@ -29,7 +29,7 @@ public class MinecraftServerMixin {
             config = new MaintenanceModeConfig();
         }
 
-        String message = "This server is currently undergoing maintenance!";
+        String message = config.getMotd();
 
         // Use a "cache" to prevent unnecessary updates
         if (config.isEnabled()) {

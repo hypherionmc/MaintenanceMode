@@ -10,13 +10,17 @@ public class MaintenanceModeConfig {
 
     private boolean doBackup = false;
     private String message = "This server is currently in maintenance mode! Please check back later";
+
+    private String motd = "This server is currently undergoing maintenance!";
+
     private List<AllowedUser> allowedUsers = new ArrayList<>();
 
     public MaintenanceModeConfig() {}
 
-    public MaintenanceModeConfig(boolean enabled, boolean doBackup, String message, List<AllowedUser> allowedUsers) {
+    public MaintenanceModeConfig(boolean enabled, boolean doBackup, String message, String motd, List<AllowedUser> allowedUsers) {
         this.enabled = enabled;
         this.message = message;
+        this.motd = motd;
         this.doBackup = doBackup;
         this.allowedUsers = allowedUsers;
     }
@@ -51,6 +55,14 @@ public class MaintenanceModeConfig {
 
     public boolean isDoBackup() {
         return doBackup;
+    }
+
+    public void setMotd(String motd) {
+        this.motd = motd;
+    }
+
+    public String getMotd() {
+        return motd;
     }
 
     public static class AllowedUser {
