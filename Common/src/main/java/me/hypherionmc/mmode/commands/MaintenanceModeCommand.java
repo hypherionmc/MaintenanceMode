@@ -43,6 +43,11 @@ public class MaintenanceModeCommand {
                                 .then(Commands.argument("message", StringArgumentType.string())
                                         .executes((source) -> setMessage(source.getSource(), StringArgumentType.getString(source, "message")))))
                 .then(
+                        Commands.literal("setMotd")
+                                .then(Commands.argument("message", StringArgumentType.string())
+                                        .executes((source) -> setMotd(source.getSource(), StringArgumentType.getString(source, "message")))))
+
+                .then(
                         Commands.literal("addAllowed")
                                 .then(Commands.argument("targets", GameProfileArgument.gameProfile())
                                         .executes((source) -> addAllowedPlayer(source.getSource(), GameProfileArgument.getGameProfiles(source, "targets")))))
@@ -206,6 +211,17 @@ public class MaintenanceModeCommand {
         }
 
         config.setMessage(message);
+        saveConfig(config, stack);
+        return 1;
+    }
+
+    private static int setMotd(CommandSourceStack stack, String message) {
+        MaintenanceModeConfig config = CommonClass.config;
+        if (config == null) {
+            config = new MaintenanceModeConfig();
+        }
+
+        config.setMotd(message);
         saveConfig(config, stack);
         return 1;
     }

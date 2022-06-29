@@ -90,13 +90,13 @@ publishing {
         debugMode = false
         token = System.getenv("MODRINTH_TOKEN")
         projectId = "QOkEkSap"
-        versionNumber = project.version + "f"
+        versionNumber = "${minecraft_version}-${project.version}f"
         versionType = "release"
         uploadFile = remapJar
         changelog = "**Requires Fabric API!**\n" +
                 "\n" +
                 "**Coming Soon**"
-        versionName = "[FABRIC/QUILT] Maintenance Mode 1.19.x - " + project.version
+        versionName = "[FABRIC/QUILT 1.19.x] Maintenance Mode - " + project.version
         gameVersions = ["1.19"]
         loaders = [ "fabric", "quilt" ]
         dependencies {
@@ -121,7 +121,7 @@ publishing {
                     "\n" +
                     "**Coming Soon**"
             mainArtifact(remapJar) {
-                displayName = "[Fabric/Quilt] Maintenance Mode 1.19.x - $project.version"
+                displayName = "[Fabric/Quilt 1.19.x] Maintenance Mode - $project.version"
             }
             relations {
                 requiredDependency 'fabric-api'

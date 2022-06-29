@@ -138,10 +138,10 @@ modrinth {
     debugMode = false
     token = System.getenv("MODRINTH_TOKEN")
     projectId = "QOkEkSap"
-    versionNumber = project.version
+    versionNumber = "${minecraft_version}-${project.version}"
     versionType = "release"
     uploadFile = jar
-    versionName = "[FORGE] Maintenance Mode 1.19.x - " + project.version
+    versionName = "[FORGE 1.19.x] Maintenance Mode - " + project.version
     gameVersions = ["1.19"]
     loaders = [ "forge" ]
 }
@@ -161,7 +161,7 @@ curseforge {
         changelogType = "markdown"
         changelog = "**Coming Soon**"
         mainArtifact(jar) {
-            displayName = "[Forge] Maintenance Mode 1.19.x - $project.version"
+            displayName = "[Forge 1.19.x] Maintenance Mode - $project.version"
         }
     }
     options {
