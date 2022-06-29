@@ -93,7 +93,7 @@ publishing {
         versionNumber = "${minecraft_version}-${project.version}f"
         versionType = "release"
         uploadFile = remapJar
-        versionName = "[FABRIC] Maintenance Mode 1.17.1 - " + project.version
+        versionName = "[FABRIC 1.17.1] Maintenance Mode - " + project.version
         gameVersions = ["1.17.1"]
         loaders = [ "fabric" ]
         dependencies {
@@ -116,7 +116,7 @@ publishing {
             changelogType = "markdown"
             changelog = "**Coming Soon**"
             mainArtifact(remapJar) {
-                displayName = "[Fabric/Quilt] Maintenance Mode 1.17.1 - $project.version"
+                displayName = "[Fabric/Quilt 1.17.1] Maintenance Mode - $project.version"
             }
             relations {
                 requiredDependency 'fabric-api'
