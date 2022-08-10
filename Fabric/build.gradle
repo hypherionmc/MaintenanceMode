@@ -93,6 +93,7 @@ publishing {
         versionNumber = "${minecraft_version}-${version}f"
         versionType = "release"
         uploadFile = remapJar
+        changelog = rootProject.file("changelog-fabric.md").text.trim()
         versionName = "[FABRIC/QUILT 1.18.x] Maintenance Mode - " + project.version
         gameVersions = ["1.18.1", "1.18.2"]
         loaders = [ "fabric", "quilt" ]
@@ -115,7 +116,7 @@ publishing {
             addGameVersion "Fabric"
             addGameVersion "Java 17"
             changelogType = "markdown"
-            changelog = "**Coming Soon**"
+            changelog = rootProject.file("changelog-fabric.md")
             mainArtifact(remapJar) {
                 displayName = "[Fabric/Quilt 1.18.x] Maintenance Mode - $project.version"
             }
