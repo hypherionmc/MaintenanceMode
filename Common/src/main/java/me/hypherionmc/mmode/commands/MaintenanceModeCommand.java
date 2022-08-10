@@ -101,7 +101,7 @@ public class MaintenanceModeCommand {
         if (names.length == 0) {
             stack.sendSuccess(Component.literal("No users are allowed to join"), false);
         } else {
-            stack.sendSuccess(Component.translatable("Allowed Users:", names.length, String.join(", ", names)), false);
+            stack.sendSuccess(Component.translatable("There are %s allowed player(s): %s", names.length, String.join(", ", names)), false);
         }
 
         return names.length;
@@ -118,7 +118,7 @@ public class MaintenanceModeCommand {
             ConfigController.saveConfig(config);
             CommonClass.config = ConfigController.loadConfig();
             if (enabled) {
-                CommonClass.kickAllPlayers();
+                CommonClass.kickAllPlayers(config.getMessage());
 
                 try {
                     if (config.isDoBackup()) {
