@@ -10,18 +10,22 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.io.File;
+
 @Mixin(MinecraftServer.class)
-public class MinecraftServerMixin {
+public abstract class MinecraftServerMixin {
 
     @Final
     @Shadow private ServerStatus status;
 
     @Shadow private String motd;
-    private String lastMessage = "";
 
-    @Inject(method = "runServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;startMetricsRecordingTick()V"))
+    @Shadow protected abstract void updateStatusIcon(ServerStatus p_129879_);
+
+    @Inject(method = "tickServer", at = @At(value = "HEAD"))
     public void runServer(CallbackInfo ci) {
         // Check if server is in maintenance mode and update MOTD
         MaintenanceModeConfig config = CommonClass.config;
@@ -33,14 +37,21 @@ public class MinecraftServerMixin {
 
         // Use a "cache" to prevent unnecessary updates
         if (config.isEnabled()) {
-            if (!this.lastMessage.equals(message)) {
-                status.setDescription(new TextComponent(message));
-                this.lastMessage = message;
-            }
-        } else if (this.motd != null && !lastMessage.equals(this.motd)) {
+            status.setDescription(new TextComponent(message));
+            this.updateStatusIcon(status);
+        } else if (this.motd != null) {
             status.setDescription(new TextComponent(this.motd));
-            this.lastMessage = this.motd;
+            this.updateStatusIcon(status);
         }
+    }
+
+    @Redirect(method = "updateStatusIcon", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;getFile(Ljava/lang/String;)Ljava/io/File;"))
+    private File injectIcon(MinecraftServer instance, String $$0) {
+        MaintenanceModeConfig config = CommonClass.config;
+        if (config == null) {
+            config = new MaintenanceModeConfig();
+        }
+        return config.isEnabled() ? new File(config.getMaintenanceIcon()) : new File($$0);
     }
 
 }
