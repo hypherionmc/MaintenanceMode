@@ -94,6 +94,7 @@ modrinth {
     versionNumber = "${minecraft_version}-${project.version}f"
     versionType = "release"
     uploadFile = remapJar
+    changelog = rootProject.file("changelog-fabric.md").text.trim()
     versionName = "[FABRIC 1.16.5] Maintenance Mode - " + project.version
     gameVersions = ["1.16.5"]
     loaders = [ "fabric" ]
@@ -115,7 +116,7 @@ curseforge {
         addGameVersion "Fabric"
         addGameVersion "Java 8"
         changelogType = "markdown"
-        changelog = "**Coming Soon**"
+        changelog = rootProject.file("changelog-fabric.md")
         mainArtifact(remapJar) {
             displayName = "[Fabric 1.16.5] Maintenance Mode - $project.version"
         }

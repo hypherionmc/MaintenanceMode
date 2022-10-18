@@ -141,6 +141,7 @@ modrinth {
     versionNumber = "${minecraft_version}-${project.version}"
     versionType = "release"
     uploadFile = jar
+    changelog = rootProject.file("changelog-forge.md").text.trim()
     versionName = "[FORGE 1.16.5] Maintenance Mode - " + project.version
     gameVersions = ["1.16.5"]
     loaders = [ "forge" ]
@@ -159,7 +160,7 @@ curseforge {
         addGameVersion "Forge"
         addGameVersion "Java 8"
         changelogType = "markdown"
-        changelog = "**Coming Soon**"
+        changelog = rootProject.file("changelog-forge.md")
         mainArtifact(jar) {
             displayName = "[Forge 1.16.5] Maintenance Mode - $project.version"
         }
