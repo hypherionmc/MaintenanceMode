@@ -10,15 +10,20 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.io.File;
+
 @Mixin(MinecraftServer.class)
-public class MinecraftServerMixin {
+public abstract class MinecraftServerMixin {
 
     @Final
     @Shadow private ServerStatusResponse statusResponse;
 
     @Shadow private String motd;
+
+    @Shadow public abstract void applyServerIconToResponse(ServerStatusResponse response);
 
     @Inject(method = "run", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;getCurrentTimeMillis()J"))
     public void runServer(CallbackInfo ci) {
@@ -33,9 +38,19 @@ public class MinecraftServerMixin {
         // Use a "cache" to prevent unnecessary updates
         if (config.isEnabled()) {
             statusResponse.setServerDescription(new TextComponentString(message));
+            this.applyServerIconToResponse(statusResponse);
         } else if (this.motd != null) {
             statusResponse.setServerDescription(new TextComponentString(this.motd));
+            this.applyServerIconToResponse(statusResponse);
         }
     }
 
+    @Redirect(method = "applyServerIconToResponse", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;getFile(Ljava/lang/String;)Ljava/io/File;"))
+    private File injectIcon(MinecraftServer instance, String $$0) {
+        MaintenanceModeConfig config = CommonClass.config;
+        if (config == null) {
+            config = new MaintenanceModeConfig();
+        }
+        return config.isEnabled() ? new File(config.getMaintenanceIcon()) : new File($$0);
+    }
 }

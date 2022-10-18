@@ -172,7 +172,7 @@ public class CommandMaintenanceMode extends CommandBase {
             ConfigController.saveConfig(config);
             CommonClass.config = ConfigController.loadConfig();
             if (enabled) {
-                CommonClass.kickAllPlayers();
+                CommonClass.kickAllPlayers(config.getMessage());
 
                 try {
                     if (config.isDoBackup()) {

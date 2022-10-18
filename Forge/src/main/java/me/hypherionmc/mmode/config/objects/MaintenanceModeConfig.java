@@ -13,13 +13,15 @@ public class MaintenanceModeConfig {
 
     private String motd = "This server is currently undergoing maintenance!";
     private List<AllowedUser> allowedUsers = new ArrayList<>();
+    private String maintenanceIcon = "server-icon.png";
 
     public MaintenanceModeConfig() {}
 
-    public MaintenanceModeConfig(boolean enabled, boolean doBackup, String message, String motd, List<AllowedUser> allowedUsers) {
+    public MaintenanceModeConfig(boolean enabled, boolean doBackup, String message, String motd, String maintenanceIcon, List<AllowedUser> allowedUsers) {
         this.enabled = enabled;
         this.message = message;
         this.motd = motd;
+        this.maintenanceIcon = maintenanceIcon;
         this.doBackup = doBackup;
         this.allowedUsers = allowedUsers;
     }
@@ -62,6 +64,14 @@ public class MaintenanceModeConfig {
 
     public void setMotd(String motd) {
         this.motd = motd;
+    }
+
+    public void setMaintenanceIcon(String maintenanceIcon) {
+        this.maintenanceIcon = maintenanceIcon;
+    }
+
+    public String getMaintenanceIcon() {
+        return maintenanceIcon;
     }
 
     public static class AllowedUser {

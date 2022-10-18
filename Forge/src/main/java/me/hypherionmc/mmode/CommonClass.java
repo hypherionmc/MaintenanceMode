@@ -19,11 +19,11 @@ public class CommonClass {
         }
     }
 
-    public static void kickAllPlayers() {
+    public static void kickAllPlayers(String message) {
         if (mcServer != null && config != null) {
             mcServer.getPlayerList().getPlayers().forEach(serverPlayer -> {
                 if (config.getAllowedUsers().stream().noneMatch(allowedUser -> allowedUser.getUuid().equals(serverPlayer.getPersistentID()))) {
-                    serverPlayer.connection.disconnect(new TextComponentString("Server is currently undergoing maintenance"));
+                    serverPlayer.connection.disconnect(new TextComponentString(message));
                 }
             });
         }
