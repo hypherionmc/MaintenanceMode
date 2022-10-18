@@ -95,7 +95,7 @@ publishing {
         uploadFile = remapJar
         changelog = rootProject.file("changelog-fabric.md").text.trim()
         versionName = "[FABRIC/QUILT 1.19.x] Maintenance Mode - " + project.version
-        gameVersions = ["1.19"]
+        gameVersions = ["1.19", "1.19.1", "1.19.2"]
         loaders = [ "fabric", "quilt" ]
         dependencies {
             required.project "P7dR8mSH"
@@ -112,6 +112,8 @@ publishing {
             id = "630716"
             releaseType = "release"
             addGameVersion "1.19"
+            addGameVersion "1.19.1"
+            addGameVersion "1.19.2"
             addGameVersion "Fabric"
             addGameVersion "Java 17"
             changelogType = "markdown"
