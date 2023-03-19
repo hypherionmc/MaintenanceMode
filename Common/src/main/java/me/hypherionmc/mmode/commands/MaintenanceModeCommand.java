@@ -77,7 +77,7 @@ public class MaintenanceModeCommand {
         saveConfig(config, stack);
 
         stack.sendSuccess(Component.literal("Do Backups Mode: " + enabled), true);
-
+        CommonClass.isDirty.set(true);
         return 1;
     }
 
@@ -135,13 +135,14 @@ public class MaintenanceModeCommand {
         }
 
         stack.sendSuccess(Component.literal("Maintenance mode: " + enabled), true);
-
+        CommonClass.isDirty.set(true);
         return 1;
     }
 
     private static int reload(CommandSourceStack stack) {
         CommonClass.config = ConfigController.loadConfig();
         stack.sendSuccess(Component.literal("Config Reloaded"), true);
+        CommonClass.isDirty.set(true);
         return 1;
     }
 
@@ -165,6 +166,7 @@ public class MaintenanceModeCommand {
         config.setAllowedUsers(allowedUsers);
 
         saveConfig(config, stack);
+        CommonClass.isDirty.set(true);
         return 1;
     }
 
@@ -188,7 +190,7 @@ public class MaintenanceModeCommand {
 
         config.setAllowedUsers(allowedUsers);
         saveConfig(config, stack);
-
+        CommonClass.isDirty.set(true);
         return 1;
     }
 
@@ -202,6 +204,7 @@ public class MaintenanceModeCommand {
 
         CommonClass.config = ConfigController.loadConfig();
         stack.sendSuccess(Component.literal("Updated config"), true);
+        CommonClass.isDirty.set(true);
     }
 
     private static int setMessage(CommandSourceStack stack, String message) {
@@ -212,6 +215,7 @@ public class MaintenanceModeCommand {
 
         config.setMessage(message);
         saveConfig(config, stack);
+        CommonClass.isDirty.set(true);
         return 1;
     }
 
@@ -223,6 +227,7 @@ public class MaintenanceModeCommand {
 
         config.setMotd(message);
         saveConfig(config, stack);
+        CommonClass.isDirty.set(true);
         return 1;
     }
 

@@ -9,7 +9,7 @@ pipeline {
         stage("Notify Discord") {
             steps {
                 discordSend webhookURL: env.FDD_WH_ADMIN,
-                        title: "Deploy Started: Maintenance Mode 1.19.x Deploy #${BUILD_NUMBER}",
+                        title: "Deploy Started: Maintenance Mode 1.19.4 Deploy #${BUILD_NUMBER}",
                         link: env.BUILD_URL,
                         result: 'SUCCESS',
                         description: "Build: [${BUILD_NUMBER}](${env.BUILD_URL})"
@@ -21,7 +21,7 @@ pipeline {
                 sh "wget -O changelog-fabric.md https://raw.githubusercontent.com/hypherionmc/changelogs/main/mmode/changelog-fabric.md"
                 sh "chmod +x ./gradlew"
                 sh "./gradlew clean"
-                sh "./gradlew modrinth curseforge -Prelease=true"
+                sh "./gradlew publishMod -Prelease=true"
             }
         }
     }
@@ -31,7 +31,7 @@ pipeline {
             deleteDir()
 
             discordSend webhookURL: env.FDD_WH_ADMIN,
-                    title: "Maintenance Mode 1.19.x Deploy #${BUILD_NUMBER}",
+                    title: "Maintenance Mode 1.19.4 Deploy #${BUILD_NUMBER}",
                     link: env.BUILD_URL,
                     result: currentBuild.currentResult,
                     description: "Build: [${BUILD_NUMBER}](${env.BUILD_URL})\nStatus: ${currentBuild.currentResult}"
