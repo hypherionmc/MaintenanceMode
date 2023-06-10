@@ -13,7 +13,7 @@ public class MaintenanceModeConfig {
 
     private String motd = "This server is currently undergoing maintenance!";
 
-    private String maintenanceIcon = "server-icon.png";
+    private String maintenanceIcon = "";
     private List<AllowedUser> allowedUsers = new ArrayList<>();
 
     public MaintenanceModeConfig() {}
