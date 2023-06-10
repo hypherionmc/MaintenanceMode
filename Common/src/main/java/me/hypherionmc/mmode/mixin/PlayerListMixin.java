@@ -20,9 +20,9 @@ public class PlayerListMixin {
         if (CommonClass.config != null && CommonClass.config.isEnabled()) {
             if (CommonClass.config.getAllowedUsers().stream().noneMatch(allowedUser -> allowedUser.getUuid().equals($$1.getId()))) {
                 String message = CommonClass.config.getMessage();
-                if (message == null || message.isEmpty()) {
+                if (message == null || message.isEmpty())
                     message = "Server is currently undergoing maintenance. Please try connecting again later";
-                }
+
                 cir.setReturnValue(Component.literal(message));
             }
         }

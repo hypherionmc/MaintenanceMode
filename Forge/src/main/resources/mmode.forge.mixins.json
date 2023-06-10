@@ -8,6 +8,7 @@
   "client": [
   ],
   "server": [
+    "ServerStatusPacketListenerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

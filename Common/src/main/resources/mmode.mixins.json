@@ -6,8 +6,8 @@
   "mixins": [
   ],
   "server": [
-    "MinecraftServerMixin",
-    "PlayerListMixin"
+    "PlayerListMixin",
+    "ServerStatusMixin"
   ],
   "injectors": {
     "defaultRequire": 1
