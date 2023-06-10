@@ -11,15 +11,13 @@ buildscript {
 }
 plugins {
     id 'com.github.johnrengelman.shadow' version '7.0.0'
-    id "com.modrinth.minotaur" version "2.+"
-    id "me.hypherionmc.cursegradle" version "2.0.1"
+    id "me.hypherionmc.modutils.modpublisher" version "1.0.16"
 }
 
 apply plugin: 'java'
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'org.spongepowered.mixin'
-apply plugin: 'maven-publish'
 
 archivesBaseName = "${mod_name}-forge-${minecraft_version}"
 
@@ -118,61 +116,22 @@ build.dependsOn reobfShadowJar
 
 jar.finalizedBy('reobfJar')
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            groupId project.group
-            artifactId project.archivesBaseName
-            version project.version
-            artifact jar
-        }
+publisher {
+    apiKeys {
+        curseforge = System.getenv("CURSE_TOKEN")
+        modrinth = System.getenv("MODRINTH_TOKEN")
     }
-    repositories {
-        maven {
-            url "file://" + System.getenv("local_maven")
-        }
-    }
-}
 
-modrinth {
-    debugMode = false
-    token = System.getenv("MODRINTH_TOKEN")
-    projectId = "QOkEkSap"
-    versionNumber = "${minecraft_version}-${version}"
+    curseID = curse_id
+    modrinthID = modrinth_id
     versionType = "release"
-    uploadFile = jar
-    changelog = rootProject.file("changelog-forge.md").text.trim()
-    versionName = "[FORGE 1.18.x] Maintenance Mode - " + project.version
+    changelog = rootProject.file("changelog-forge.md")
+    version = "${minecraft_version}-${project.version}"
+    displayName = "[FORGE 1.18.x] Maintenance Mode - ${project.version}"
     gameVersions = ["1.18.1", "1.18.2"]
-    loaders = [ "forge" ]
+    loaders = ["forge"]
+    artifact = jar
 }
 
-curseforge {
-    if (System.getenv("CURSE_TOKEN") !== null) {
-        apiKey = System.getenv("CURSE_TOKEN")
-    } else {
-        apiKey = ""
-    }
-    project {
-        id = "630716"
-        releaseType = "release"
-        addGameVersion "1.18.2"
-        addGameVersion "1.18.1"
-        addGameVersion "Forge"
-        addGameVersion "Java 17"
-        changelogType = "markdown"
-        changelog = rootProject.file("changelog-forge.md")
-        mainArtifact(jar) {
-            displayName = "[Forge 1.18.x] Maintenance Mode - $project.version"
-        }
-    }
-    options {
-        forgeGradleIntegration = false
-        debug = false
-        fabricIntegration = false
-    }
-}
+publishMod.dependsOn(build)
 
-afterEvaluate {
-    tasks.curseforge630716.dependsOn reobfShadowJar
-}
