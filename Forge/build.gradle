@@ -116,6 +116,15 @@ build.dependsOn reobfShadowJar
 
 jar.finalizedBy('reobfJar')
 
+task copyAllArtifacts(type: Copy) {
+    from "$buildDir/libs"
+    into "$rootDir/artifacts"
+    include("*.jar")
+}
+
+build.finalizedBy(copyAllArtifacts)
+
+
 publisher {
     apiKeys {
         curseforge = System.getenv("CURSE_TOKEN")

@@ -68,16 +68,4 @@ subprojects {
         delete "$buildDir/libs"
         delete "$rootDir/artifacts"
     }
-
-    task copyAllArtifacts(type: Copy) {
-        if (project.name !== "Common") {
-            from "$buildDir/libs"
-            into "$rootDir/artifacts"
-            include("*.jar")
-            delete("$rootDir/artifacts/*-common-*.jar")
-        }
-    }
-
-    build.finalizedBy(copyAllArtifacts)
-
 }
