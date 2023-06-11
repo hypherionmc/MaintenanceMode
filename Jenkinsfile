@@ -17,11 +17,11 @@ pipeline {
         }
         stage("Prepare & Publish") {
             steps {
-                sh "wget -O changelog-forge.md https://raw.githubusercontent.com/hypherionmc/changelogs/main/mmode/changelog-forge.md"
-                sh "wget -O changelog-fabric.md https://raw.githubusercontent.com/hypherionmc/changelogs/main/mmode/changelog-fabric.md"
+                sh "curl https://raw.githubusercontent.com/hypherionmc/changelogs/main/mmode/changelog-forge.md -output changelog-forge.md"
+                sh "curl https://raw.githubusercontent.com/hypherionmc/changelogs/main/mmode/changelog-fabric.md -output changelog-fabric.md"
                 sh "chmod +x ./gradlew"
                 sh "./gradlew clean"
-                sh "./gradlew modrinth curseforge -Prelease=true"
+                sh "./gradlew publishMod -Prelease=true"
             }
         }
     }

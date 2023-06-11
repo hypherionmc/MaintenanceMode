@@ -4,11 +4,13 @@
   "package": "me.hypherionmc.mmode.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+
   ],
   "client": [
   ],
   "server": [
-    "MinecraftServerMixin",
+    "ServerStatusMixin",
+    "ServerStatusPacketListenerMixin",
     "PlayerListMixin"
   ],
   "injectors": {
