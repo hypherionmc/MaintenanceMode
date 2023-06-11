@@ -76,14 +76,14 @@ public class MaintenanceModeCommand {
         config.setDoBackup(enabled);
         saveConfig(config, stack);
 
-        stack.sendSuccess(Component.literal("Do Backups Mode: " + enabled), true);
+        stack.sendSuccess(() -> Component.literal("Do Backups Mode: " + enabled), true);
         CommonClass.isDirty.set(true);
         return 1;
     }
 
     private static int checkStatus(CommandSourceStack stack) {
         if (CommonClass.config != null) {
-            stack.sendSuccess(Component.literal("Maintenance Mode: " + CommonClass.config.isEnabled()), true);
+            stack.sendSuccess(() -> Component.literal("Maintenance Mode: " + CommonClass.config.isEnabled()), true);
         } else {
             stack.sendFailure(Component.literal("Maintenance Mode: Failed to load config"));
         }
@@ -99,9 +99,9 @@ public class MaintenanceModeCommand {
         String[] names = config.getAllowedUsers().stream().map(MaintenanceModeConfig.AllowedUser::getName).toArray(String[]::new);
 
         if (names.length == 0) {
-            stack.sendSuccess(Component.literal("No users are allowed to join"), false);
+            stack.sendSuccess(() -> Component.literal("No users are allowed to join"), false);
         } else {
-            stack.sendSuccess(Component.translatable("There are %s allowed player(s): %s", names.length, String.join(", ", names)), false);
+            stack.sendSuccess(() -> Component.translatable("There are %s allowed player(s): %s", names.length, String.join(", ", names)), false);
         }
 
         return names.length;
@@ -134,14 +134,14 @@ public class MaintenanceModeCommand {
             ModConstants.LOG.error("Failed to save config: {}", e.getMessage());
         }
 
-        stack.sendSuccess(Component.literal("Maintenance mode: " + enabled), true);
+        stack.sendSuccess(() -> Component.literal("Maintenance mode: " + enabled), true);
         CommonClass.isDirty.set(true);
         return 1;
     }
 
     private static int reload(CommandSourceStack stack) {
         CommonClass.config = ConfigController.loadConfig();
-        stack.sendSuccess(Component.literal("Config Reloaded"), true);
+        stack.sendSuccess(() -> Component.literal("Config Reloaded"), true);
         CommonClass.isDirty.set(true);
         return 1;
     }
@@ -203,7 +203,7 @@ public class MaintenanceModeCommand {
         }
 
         CommonClass.config = ConfigController.loadConfig();
-        stack.sendSuccess(Component.literal("Updated config"), true);
+        stack.sendSuccess(() -> Component.literal("Updated config"), true);
         CommonClass.isDirty.set(true);
     }
 

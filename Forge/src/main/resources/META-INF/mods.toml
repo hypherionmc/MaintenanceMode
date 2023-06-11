@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[45,)"
+loaderVersion="[46,)"
 license="MIT"
 issueTrackerURL="https://github.com/hypherionmc/MaintenanceMode/issues"
 
@@ -20,13 +20,13 @@ Put your server in maintenance mode, while giving only specific people access. U
 [[dependencies.mmode]]
     modId="forge"
     mandatory=true
-    versionRange="[45,)"
+    versionRange="[46,)"
     ordering="NONE"
     side="SERVER"
 
 [[dependencies.mmode]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.19.4,1.20)"
+    versionRange="[1.20,)"
     ordering="NONE"
     side="SERVER"

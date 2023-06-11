@@ -127,8 +127,8 @@ publisher {
     versionType = "release"
     changelog = rootProject.file("changelog-forge.md")
     version = "${minecraft_version}-${project.version}"
-    displayName = "[FORGE 1.19.4] Maintenance Mode - ${project.version}"
-    gameVersions = ["1.19.4"]
+    displayName = "[FORGE 1.20] Maintenance Mode - ${project.version}"
+    gameVersions = ["1.20"]
     loaders = ["forge"]
     artifact = jar
 }
