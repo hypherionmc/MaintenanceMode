@@ -12,6 +12,7 @@ displayURL="https://readme.firstdarkdev.xyz/maintenance-mode/introduction/"
 logoFile="mmode_icon.png"
 #credits="Thanks for this example mod goes to Java"
 authors="HypherionSA"
+displayTest = "IGNORE_ALL_VERSION"
 
 description='''
 Put your server in maintenance mode, while giving only specific people access. Useful for doing work on servers without having people join!
