@@ -1,0 +1,42 @@
+pipeline {
+    agent {
+        label "master"
+    }
+    tools {
+        jdk "JAVA17"
+    }
+    stages {
+        stage("Notify Discord") {
+            steps {
+                discordSend webhookURL: env.FDD_WH_ADMIN,
+                        title: "Deploy Started: Maintenance Mode 1.20.4 Deploy #${BUILD_NUMBER}",
+                        link: env.BUILD_URL,
+                        result: 'SUCCESS',
+                        description: "Build: [${BUILD_NUMBER}](${env.BUILD_URL})"
+            }
+        }
+        stage("Prepare") {
+            steps {
+                sh "chmod +x ./gradlew"
+                sh "./gradlew clean"
+            }
+        }
+        stage("Publish to Modrinth/Curseforge") {
+            steps {
+                sh "./gradlew publishMod -Prelease=true"
+            }
+        }
+    }
+    post {
+        always {
+            sh "./gradlew --stop"
+            deleteDir()
+
+            discordSend webhookURL: env.FDD_WH_ADMIN,
+                    title: "Maintenance Mode 1.20.4 Deploy #${BUILD_NUMBER}",
+                    link: env.BUILD_URL,
+                    result: currentBuild.currentResult,
+                    description: "Build: [${BUILD_NUMBER}](${env.BUILD_URL})\nStatus: ${currentBuild.currentResult}"
+        }
+    }
+}
