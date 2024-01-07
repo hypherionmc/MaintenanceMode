@@ -2,6 +2,7 @@ package me.hypherionmc.mmode.mixin;
 
 import me.hypherionmc.mmode.CommonClass;
 import me.hypherionmc.mmode.config.objects.MaintenanceModeConfig;
+import me.hypherionmc.mmode.util.FormattingUtils;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.status.ClientboundStatusResponsePacket;
@@ -40,7 +41,7 @@ public class ServerStatusPacketListenerMixin {
             if (message == null || message.isEmpty())
                 message = this.status.description().getString();
 
-            ServerStatus modifiedStatus = new ServerStatus(Component.literal(message), this.status.players(), this.status.version(), CommonClass.favicon, this.status.enforcesSecureChat(), this.status.forgeData());
+            ServerStatus modifiedStatus = new ServerStatus(FormattingUtils.format(message), this.status.players(), this.status.version(), CommonClass.favicon, this.status.enforcesSecureChat(), this.status.forgeData());
             this.connection.send(new ClientboundStatusResponsePacket(modifiedStatus));
         }
     }

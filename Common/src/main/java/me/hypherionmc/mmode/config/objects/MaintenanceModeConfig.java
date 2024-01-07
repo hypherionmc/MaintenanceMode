@@ -1,10 +1,19 @@
 package me.hypherionmc.mmode.config.objects;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class MaintenanceModeConfig {
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+public final class MaintenanceModeConfig {
 
     private boolean enabled = false;
 
@@ -14,91 +23,16 @@ public class MaintenanceModeConfig {
     private String motd = "This server is currently undergoing maintenance!";
 
     private String maintenanceIcon = "";
+
     private List<AllowedUser> allowedUsers = new ArrayList<>();
 
-    public MaintenanceModeConfig() {}
 
-    public MaintenanceModeConfig(boolean enabled, boolean doBackup, String message, String motd, String maintenanceIcon, List<AllowedUser> allowedUsers) {
-        this.enabled = enabled;
-        this.message = message;
-        this.motd = motd;
-        this.doBackup = doBackup;
-        this.allowedUsers = allowedUsers;
-        this.maintenanceIcon = maintenanceIcon;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public List<AllowedUser> getAllowedUsers() {
-        return allowedUsers;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public void setAllowedUsers(List<AllowedUser> allowedUsers) {
-        this.allowedUsers = allowedUsers;
-    }
-
-    public void setDoBackup(boolean doBackup) {
-        this.doBackup = doBackup;
-    }
-
-    public String getMotd() {
-        return motd;
-    }
-
-    public void setMotd(String motd) {
-        this.motd = motd;
-    }
-
-    public boolean isDoBackup() {
-        return doBackup;
-    }
-
-    public String getMaintenanceIcon() {
-        return maintenanceIcon;
-    }
-
-    public void setMaintenanceIcon(String maintenanceIcon) {
-        this.maintenanceIcon = maintenanceIcon;
-    }
-
-    public static class AllowedUser {
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    public final static class AllowedUser {
         private String name;
         private UUID uuid;
-
-        public AllowedUser(String username, UUID uuid) {
-            this.name = username;
-            this.uuid = uuid;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public UUID getUuid() {
-            return uuid;
-        }
-
-        public void setUuid(UUID uuid) {
-            this.uuid = uuid;
-        }
     }
 
 }

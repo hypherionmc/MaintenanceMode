@@ -2,18 +2,15 @@ pluginManagement {
     repositories {
         gradlePluginPortal()
         maven {
-            url "https://maven.firstdarkdev.xyz/releases"
+            url "https://mcentral.firstdark.dev/releases"
         }
         maven {
-            name = 'Fabric'
-            url = 'https://maven.fabricmc.net/'
-        }
-        maven {
-            name = 'Sponge Snapshots'
-            url = 'https://repo.spongepowered.org/repository/maven-public/'
+            url "https://maven.firstdark.dev/releases"
         }
     }
 }
 
 rootProject.name = 'MaintenanceMode'
-include("Common", "Fabric", "Forge")
+include("Common", "Fabric", "Forge", "NeoForge")
+
+

@@ -11,6 +11,7 @@ import me.hypherionmc.mmode.ModConstants;
 import me.hypherionmc.mmode.config.ConfigController;
 import me.hypherionmc.mmode.config.objects.MaintenanceModeConfig;
 import me.hypherionmc.mmode.util.BackupUtil;
+import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.GameProfileArgument;
@@ -59,6 +60,7 @@ public class MaintenanceModeCommand {
 
     private static int doBackup(CommandSourceStack source) {
         try {
+            source.sendSuccess(() -> Component.literal("Starting Maintenance Mode Backup"), true);
             BackupUtil.createBackup();
         } catch (Exception e) {
             ModConstants.LOG.error("Failed to create server backup: {}", e.getMessage());
@@ -76,14 +78,14 @@ public class MaintenanceModeCommand {
         config.setDoBackup(enabled);
         saveConfig(config, stack);
 
-        stack.sendSuccess(() -> Component.literal("Do Backups Mode: " + enabled), true);
+        stack.sendSuccess(() -> Component.literal("Maintenance Mode Backups: " + ChatFormatting.YELLOW + (enabled ? "Enabled" : "Disabled")), true);
         CommonClass.isDirty.set(true);
         return 1;
     }
 
     private static int checkStatus(CommandSourceStack stack) {
         if (CommonClass.config != null) {
-            stack.sendSuccess(() -> Component.literal("Maintenance Mode: " + CommonClass.config.isEnabled()), true);
+            stack.sendSuccess(() -> Component.literal("Maintenance Mode: " + ChatFormatting.YELLOW + (CommonClass.config.isEnabled() ? "Enabled" : "Disabled")), true);
         } else {
             stack.sendFailure(Component.literal("Maintenance Mode: Failed to load config"));
         }
@@ -134,7 +136,7 @@ public class MaintenanceModeCommand {
             ModConstants.LOG.error("Failed to save config: {}", e.getMessage());
         }
 
-        stack.sendSuccess(() -> Component.literal("Maintenance mode: " + enabled), true);
+        stack.sendSuccess(() -> Component.literal("Maintenance Mode: " + ChatFormatting.YELLOW + (CommonClass.config.isEnabled() ? "Enabled" : "Disabled")), true);
         CommonClass.isDirty.set(true);
         return 1;
     }

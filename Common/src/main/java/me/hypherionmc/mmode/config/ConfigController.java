@@ -10,7 +10,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class ConfigController {
+public final class ConfigController {
 
     private static File confFile;
 
@@ -50,6 +50,7 @@ public class ConfigController {
         } catch (Exception e) {
             ModConstants.LOG.error("Failed to load config file: {}", e.getMessage());
         }
+
         return new MaintenanceModeConfig();
     }
 

@@ -4,6 +4,7 @@
   "package": "me.hypherionmc.mmode.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+
   ],
   "server": [
     "PlayerListMixin",
@@ -11,6 +12,5 @@
   ],
   "injectors": {
     "defaultRequire": 1
-  },
-  "refmap": "${refmap_target}refmap.json"
+  }
 }

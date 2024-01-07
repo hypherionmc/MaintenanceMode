@@ -11,14 +11,14 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class CommonClass {
+public final class CommonClass {
 
     public static AtomicBoolean isDirty = new AtomicBoolean(false);
-
     public static MaintenanceModeConfig config;
     private static MinecraftServer mcServer;
     public static Optional<ServerStatus.Favicon> favicon = Optional.empty();
@@ -32,6 +32,7 @@ public class CommonClass {
             File file = new File(config.getMaintenanceIcon());
             if (!file.exists())
                 return;
+
             favicon = loadIcon(file);
         }
 
@@ -56,16 +57,12 @@ public class CommonClass {
 
     private static Optional<ServerStatus.Favicon> loadIcon(File file) {
         try {
-            BufferedImage bufferedImage = ImageIO.read(file);
-            Preconditions.checkState(bufferedImage.getWidth() == 64, "Must be 64 pixels wide");
-            Preconditions.checkState(bufferedImage.getHeight() == 64, "Must be 64 pixels high");
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            ImageIO.write(bufferedImage, "PNG", outputStream);
-            return Optional.of(new ServerStatus.Favicon(outputStream.toByteArray()));
+            return loadIcon(new FileInputStream(file));
         } catch (Exception e) {
             ModConstants.LOG.error("Failed to load icon", e);
-            return Optional.empty();
         }
+
+        return Optional.empty();
     }
 
     private static Optional<ServerStatus.Favicon> loadIcon(InputStream inputStream) {

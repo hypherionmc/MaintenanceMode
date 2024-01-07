@@ -2,12 +2,12 @@
 
 Put your server in maintenance mode!
 
-[Documentation](https://readme.firstdarkdev.xyz/maintenance-mode/introduction/)
+[Documentation](https://mmode.fdd-docs.com/)
 
 ---
 
 ### Credits
-* Project made with [MultiLoaderTemplate](https://github.com/jaredlll08/multiLoader-Template/)
+* Project made with [FDD-Xplat](https://github.com/firstdarkdev/fdd-xplat)
 
 ---
 ### License

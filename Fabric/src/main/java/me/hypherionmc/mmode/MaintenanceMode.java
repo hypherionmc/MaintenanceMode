@@ -9,10 +9,7 @@ public class MaintenanceMode implements DedicatedServerModInitializer {
 
     @Override
     public void onInitializeServer() {
-        CommandRegistrationCallback.EVENT.register(((dispatcher, dedicated, env) -> {
-            MaintenanceModeCommand.register(dispatcher);
-        }));
-
+        CommandRegistrationCallback.EVENT.register(((dispatcher, dedicated, env) -> MaintenanceModeCommand.register(dispatcher)));
         ServerLifecycleEvents.SERVER_STARTED.register(CommonClass::init);
     }
 }

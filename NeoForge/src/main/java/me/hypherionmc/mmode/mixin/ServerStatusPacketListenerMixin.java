@@ -41,7 +41,7 @@ public class ServerStatusPacketListenerMixin {
             if (message == null || message.isEmpty())
                 message = this.status.description().getString();
 
-            ServerStatus modifiedStatus = new ServerStatus(FormattingUtils.format(message), this.status.players(), this.status.version(), CommonClass.favicon, this.status.enforcesSecureChat());
+            ServerStatus modifiedStatus = new ServerStatus(FormattingUtils.format(message), this.status.players(), this.status.version(), CommonClass.favicon, this.status.enforcesSecureChat(), this.status.isModded());
             this.connection.send(new ClientboundStatusResponsePacket(modifiedStatus));
         }
     }

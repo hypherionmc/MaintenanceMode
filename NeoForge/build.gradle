@@ -2,12 +2,10 @@ import com.hypherionmc.modpublisher.properties.CurseEnvironment
 import com.hypherionmc.modpublisher.properties.ModLoader
 import com.hypherionmc.modpublisher.properties.ReleaseType
 
-archivesBaseName = "${mod_name.replace(" ", "")}-Fabric-${minecraft_version}"
+// Adjust the output jar name here
+archivesBaseName = "${mod_name.replace(" ", "")}-NeoForge-${minecraft_version}"
 
 dependencies {
-    // Core
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_api}"
-
     // Do not edit or remove
     implementation project(":Common")
 }
@@ -30,8 +28,9 @@ shadowJar {
  */
 
 unimined.minecraft {
-    fabric {
-        loader fabric_loader
+    neoForged {
+        loader neoforge_version
+        mixinConfig("${mod_id}.mixins.json", "${mod_id}.neoforge.mixins.json")
     }
 }
 
@@ -49,7 +48,7 @@ processResources {
     from project(":Common").sourceSets.main.resources
     def buildProps = project.properties.clone()
 
-    filesMatching(['fabric.mod.json']) {
+    filesMatching("META-INF/mods.toml") {
         expand buildProps
     }
 }
@@ -67,15 +66,15 @@ publisher {
     }
 
     setDebug(!rootProject.release)
-    setChangelog("https://raw.githubusercontent.com/hypherionmc/changelogs/main/mmode/changelog-fabric.md")
+    setChangelog("https://raw.githubusercontent.com/hypherionmc/changelogs/main/mmode/changelog-forge.md")
     setCurseID(curse_id)
     setModrinthID(modrinth_id)
     setReleaseType(ReleaseType.RELEASE)
     setVersion(project.version)
     setArtifact(tasks.remapJar)
 
-    setDisplayName("[Fabric 1.20.4] Maintenance Mode - ${project.version}")
+    setDisplayName("[NeoForge 1.20.4] Maintenance Mode - ${project.version}")
     setGameVersions("1.20.4")
-    setLoaders(ModLoader.FABRIC, ModLoader.QUILT)
+    setLoaders(ModLoader.NEOFORGE)
     setCurseEnvironment(CurseEnvironment.SERVER)
 }
