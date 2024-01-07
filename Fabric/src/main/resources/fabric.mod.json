@@ -9,14 +9,14 @@
       "HypherionSA"
     ],
     "contact": {
-      "homepage": "https://readme.firstdarkdev.xyz/maintenance-mode/introduction/",
+      "homepage": "https://mmode.fdd-docs.com/",
       "sources": "https://github.com/hypherionmc/MaintenanceMode/"
     },
 
     "license": "MIT",
     "icon": "assets/mmode/mmode_icon.png",
 
-    "environment": "*",
+    "environment": "server",
     "entrypoints": {
       "server": [
         "me.hypherionmc.mmode.MaintenanceMode"
@@ -30,7 +30,7 @@
     "depends": {
       "fabricloader": ">=0.14",
       "fabric": "*",
-      "minecraft": ">=1.20",
+      "minecraft": ">=1.20.4",
       "java": ">=17"
     }
   }
