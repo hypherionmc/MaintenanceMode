@@ -3,10 +3,7 @@ def projectIcon = "https://cdn.modrinth.com/data/QOkEkSap/3470afc6ab2b3cae086df6
 
 pipeline {
     agent {
-        label "master"
-    }
-    tools {
-        jdk "JAVA17"
+        docker { image "registry.firstdark.dev/java21:latest" }
     }
 
     stages {
