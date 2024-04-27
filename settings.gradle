@@ -1,6 +1,7 @@
 pluginManagement {
     repositories {
         gradlePluginPortal()
+        mavenLocal()
         maven {
             url "https://mcentral.firstdark.dev/releases"
         }
@@ -11,6 +12,6 @@ pluginManagement {
 }
 
 rootProject.name = 'MaintenanceMode'
-include("Common", "Fabric", "Forge", "NeoForge")
+include("Common", "Fabric", "NeoForge")
 
 

@@ -1,8 +1,9 @@
 plugins {
     id 'java'
     id 'com.github.johnrengelman.shadow' version '8.0.0' apply false
-    id "xyz.wagyourtail.unimined" version "1.1.0-SNAPSHOT" apply false
-    id "com.hypherionmc.modutils.modpublisher" version "2.0.+" apply false
+    id "xyz.wagyourtail.unimined" version "1.3.0-SNAPSHOT" apply false
+    id "com.hypherionmc.modutils.modpublisher" version "2.1.+" apply false
+    id "com.hypherionmc.modutils.orion" version "1.0.3"
     id 'maven-publish'
 }
 
@@ -19,7 +20,6 @@ if (!release && System.getenv('BUILD_NUMBER') != null) {
 }
 
 group = project_group
-version = "${final_version}"
 
 subprojects {
     apply plugin: "xyz.wagyourtail.unimined"
