@@ -18,14 +18,14 @@ Put your server in maintenance mode, while giving only specific people access. U
 
 [[dependencies.${ mod_id }]]
     modId = "neoforge"
-    mandatory = true
-    versionRange = "[20.4,)"
+    type="required"
+    versionRange = "[20.5,)"
     ordering = "NONE"
     side = "SERVER"
 
 [[dependencies.${mod_id}]]
     modId="minecraft"
-    mandatory=true
-    versionRange="[1.20.4,)"
+    type="required"
+    versionRange="[1.20.5,1.21)"
     ordering="NONE"
     side="SERVER"

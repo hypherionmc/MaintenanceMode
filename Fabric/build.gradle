@@ -66,7 +66,6 @@ publisher {
         modrinth(System.getenv("MODRINTH_TOKEN"))
     }
 
-    setDebug(!rootProject.release)
     setChangelog("https://raw.githubusercontent.com/hypherionmc/changelogs/main/mmode/changelog-fabric.md")
     setCurseID(curse_id)
     setModrinthID(modrinth_id)
@@ -74,8 +73,8 @@ publisher {
     setVersion(project.version)
     setArtifact(tasks.remapJar)
 
-    setDisplayName("[Fabric 1.20.4] Maintenance Mode - ${project.version}")
-    setGameVersions("1.20.4")
+    setDisplayName("[Fabric 1.20.5] Maintenance Mode - ${project.version}")
+    setGameVersions("1.20.5")
     setLoaders(ModLoader.FABRIC, ModLoader.QUILT)
     setCurseEnvironment(CurseEnvironment.SERVER)
 }
