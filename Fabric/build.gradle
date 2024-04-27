@@ -62,8 +62,8 @@ tasks.withType(JavaCompile).configureEach {
 
 publisher {
     apiKeys {
-        curseforge(System.getenv("CURSE_TOKEN"))
-        modrinth(System.getenv("MODRINTH_TOKEN"))
+        curseforge(rootProject.orion.getenv("CURSE_TOKEN"))
+        modrinth(rootProject.orion.getenv("MODRINTH_TOKEN"))
     }
 
     setChangelog("https://raw.githubusercontent.com/hypherionmc/changelogs/main/mmode/changelog-fabric.md")

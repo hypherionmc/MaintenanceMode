@@ -1,6 +1,9 @@
 pipeline {
-    agent {
-        docker { image "registry.firstdark.dev/java21:latest" }
+     agent {
+        docker {
+            image "registry.firstdark.dev/java21:latest"
+            alwaysPull true
+        }
     }
 
     stages {
