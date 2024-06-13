@@ -1,19 +1,29 @@
 def projectName = "Maintenance Mode";
 def projectIcon = "https://cdn.modrinth.com/data/QOkEkSap/3470afc6ab2b3cae086df640e0258940f4dd4261.png";
+def JDK = "21";
+def majorMc = "1.21";
+def modLoaders = "neoforge|fabric|quilt";
+def supportedMc = "1.21";
+def reltype = "snapshot";
 
 pipeline {
     agent {
-        label "master"
+        docker {
+            image "registry.firstdark.dev/java${JDK}:latest"
+            alwaysPull true
+            args '-v gradle-cache:/home/gradle/.gradle'
+        }
     }
-    tools {
-        jdk "JAVA17"
+
+    environment {
+        GRADLE_USER_HOME = '/home/gradle/.gradle'
     }
 
     stages {
         stage("Notify Discord") {
             steps {
                 discordSend webhookURL: env.SSS_WEBHOOK,
-                        title: "Deploy Started: ${projectName} 1.20.4 Deploy #${BUILD_NUMBER}",
+                        title: "Deploy Started: ${projectName} ${majorMc} Deploy #${BUILD_NUMBER}",
                         link: env.BUILD_URL,
                         result: 'SUCCESS',
                         description: "Build: [${BUILD_NUMBER}](${env.BUILD_URL})"
@@ -23,13 +33,7 @@ pipeline {
         stage("Prepare") {
             steps {
                 sh "chmod +x ./gradlew"
-                sh "./gradlew clean"
-            }
-        }
-
-        stage("Build") {
-            steps {
-                sh "./gradlew build"
+                sh "./gradlew build -PreleaseType=${reltype}"
             }
         }
     }
@@ -43,10 +47,8 @@ pipeline {
                 projectSlug: "mmode",
                 projectName: "${projectName}",
                 projectIcon: "${projectIcon}",
-                versionName: "Snapshot 1.2.${BUILD_NUMBER}",
-                version: "1.2.${BUILD_NUMBER}",
-                modLoaders: "forge|neoforge|fabric|quilt",
-                minecraftVersions: "1.20.4",
+                modLoaders: "${modLoaders}",
+                minecraftVersions: "${supportedMc}",
                 failWebhook: env.SSS_WEBHOOK,
                 publishWebhooks: "${env.SSS_WEBHOOK}|${env.FDD_WH}"
 

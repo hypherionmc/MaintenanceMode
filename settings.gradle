@@ -11,6 +11,6 @@ pluginManagement {
 }
 
 rootProject.name = 'MaintenanceMode'
-include("Common", "Fabric", "Forge", "NeoForge")
+include("Common", "Fabric", "NeoForge")
 
 
