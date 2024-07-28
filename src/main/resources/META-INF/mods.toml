@@ -1,0 +1,45 @@
+modLoader="javafml"
+loaderVersion="[1,)"
+license="MIT"
+issueTrackerURL="https://github.com/hypherionmc/MaintenanceMode/issues"
+
+[[mods]]
+modId = "${mod_id}"
+version = "${version}"
+displayName = "${mod_name}"
+displayURL="https://mmode.fdd-docs.com/"
+logoFile="mmode_icon.png"
+authors="${mod_author}"
+displayTest = "IGNORE_ALL_VERSION"
+
+description='''
+Put your server in maintenance mode, while giving only specific people access. Useful for doing work on servers without having people join!
+'''
+
+[[dependencies.${mod_id}]]
+modId="forge"
+mandatory=false
+versionRange="[40,)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.${mod_id}]]
+modId="neoforge"
+mandatory=false
+versionRange="[20.4,)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.${mod_id}]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.18.2,)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.${mod_id}]]
+modId="craterlib"
+mandatory=true
+versionRange="[2.1.0,)"
+ordering="AFTER"
+side="SERVER"
