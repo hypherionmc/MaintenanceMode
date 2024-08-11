@@ -1,7 +1,7 @@
 plugins {
     id 'java'
-    id 'com.github.johnrengelman.shadow' version '8.1.0'
-    id "xyz.wagyourtail.unimined" version "1.1.0-SNAPSHOT"
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id "xyz.wagyourtail.unimined" version "1.2.9"
     id "com.hypherionmc.modutils.modpublisher" version "2.1.+"
     id "com.hypherionmc.modutils.orion" version "1.0.+"
 }
@@ -20,8 +20,6 @@ orion.setup {
 }
 
 group = project_group
-sourceCompatibility = JavaVersion.VERSION_21
-targetCompatibility = JavaVersion.VERSION_21
 archivesBaseName = "${mod_name.replace(" ", "")}-Universal"
 
 repositories {
@@ -38,11 +36,13 @@ configurations {
 
 dependencies {
     shade("org.apache.commons:commons-compress:${commons_compress}")
+    shade("com.coreoz:wisp:${wisp}")
+    shade("ch.eitchnet:cron:${cron}")
 
     compileOnly("org.projectlombok:lombok:${lombok}")
     annotationProcessor("org.projectlombok:lombok:${lombok}")
 
-    implementation "com.hypherionmc.craterlib:CraterLib-Common-1.21:2.1.0+port.0:dev"
+    implementation "com.hypherionmc.craterlib:CraterLib-Common-1.21:2.1.0+port.1:dev"
     implementation "com.hypherionmc.noloaderthanks:noloaderthanks:1.0.0"
 }
 
@@ -103,14 +103,21 @@ processResources {
     }
 }
 
+var shadowPath = "me.hypherionmc.mmode.shadow"
+
 shadowJar {
     from sourceSets.main.output
     configurations = [project.configurations.shade]
     setArchiveClassifier(null)
 
     dependencies {
-        relocate "org.apache.commons", "shadow.apache.commons"
+        relocate "org.apache.commons.compress", "${shadowPath}.apache.commons.compress"
+        relocate "fc.cron", "${shadowPath}.cron"
+        relocate "com.coreoz.wisp", "${shadowPath}.coreoz.wisp"
     }
+
+    exclude("org/slf4j/**")
+    exclude("META-INF/maven/**")
 }
 
 shadowJar.doLast {

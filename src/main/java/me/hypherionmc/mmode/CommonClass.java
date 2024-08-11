@@ -12,16 +12,12 @@ import com.hypherionmc.craterlib.utils.ChatUtils;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import me.hypherionmc.mmode.commands.MaintenanceModeCommand;
-import me.hypherionmc.mmode.config.ConfigController;
-import me.hypherionmc.mmode.config.objects.MaintenanceModeConfig;
-import shadow.kyori.adventure.text.Component;
+import me.hypherionmc.mmode.config.MaintenanceModeConfig;
+import me.hypherionmc.mmode.schedule.MaintenanceSchedule;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -31,18 +27,19 @@ public final class CommonClass {
     public static final CommonClass INSTANCE = new CommonClass();
 
     public AtomicBoolean isDirty = new AtomicBoolean(false);
-    public MaintenanceModeConfig config;
     private BridgedMinecraftServer mcServer;
     private Optional<WrappedServerStatus.WrappedFavicon> favicon = Optional.empty();
     private Optional<WrappedServerStatus.WrappedFavicon> backupIcon = Optional.empty();
+    public boolean resetOnStartup = false;
 
     @CraterEventListener
     public void serverStartedEvent(CraterServerLifecycleEvent.Started event) {
-        config = ConfigController.initConfig();
+        new MaintenanceModeConfig();
         mcServer = event.getServer();
+        MaintenanceSchedule.INSTANCE.initScheduler();
 
-        if (config.getMaintenanceIcon() != null && !config.getMaintenanceIcon().isEmpty()) {
-            File file = new File(config.getMaintenanceIcon());
+        if (MaintenanceModeConfig.INSTANCE.getMaintenanceIcon() != null && !MaintenanceModeConfig.INSTANCE.getMaintenanceIcon().isEmpty()) {
+            File file = new File(MaintenanceModeConfig.INSTANCE.getMaintenanceIcon());
             if (!file.exists())
                 return;
 
@@ -53,8 +50,8 @@ public final class CommonClass {
             backupIcon = loadIcon(Thread.currentThread().getContextClassLoader().getResourceAsStream("mmicon.png"));
         }
 
-        if (config != null) {
-            ModConstants.LOG.info(config.isEnabled() ? "Maintenance mode is active!" : "Maintenance mode is off");
+        if (MaintenanceModeConfig.INSTANCE != null) {
+            ModConstants.LOG.info(MaintenanceModeConfig.INSTANCE.isEnabled() ? "Maintenance mode is active!" : "Maintenance mode is off");
         }
     }
 
@@ -66,9 +63,9 @@ public final class CommonClass {
     @CraterEventListener
     public void playerPreLoginEvent(PlayerPreLoginEvent event) {
         // Check if maintenance mode is enabled and kick the player
-        if (config.isEnabled()) {
-            if (config.getAllowedUsers().stream().noneMatch(allowedUser -> allowedUser.getUuid().equals(event.getGameProfile().getId()))) {
-                String message = config.getMessage();
+        if (MaintenanceModeConfig.INSTANCE.isEnabled()) {
+            if (MaintenanceModeConfig.INSTANCE.getAllowedUsers().stream().noneMatch(allowedUser -> allowedUser.getUuid().equals(event.getGameProfile().getId().toString()))) {
+                String message = MaintenanceModeConfig.INSTANCE.getMessage();
                 if (message == null || message.isEmpty())
                     message = "Server is currently undergoing maintenance. Please try connecting again later";
 
@@ -79,30 +76,45 @@ public final class CommonClass {
 
     @CraterEventListener
     public void requestFavIconEvent(ServerStatusEvent.FaviconRequestEvent event) {
-        if (!config.isEnabled() && backupIcon.isPresent())
+        if (!MaintenanceModeConfig.INSTANCE.isEnabled() && backupIcon.isPresent())
             event.setNewIcon(backupIcon);
 
-        if (config.isEnabled() && favicon.isPresent())
+        if (MaintenanceModeConfig.INSTANCE.isEnabled() && favicon.isPresent())
             event.setNewIcon(favicon);
     }
 
     @CraterEventListener
     public void requestServerStatus(ServerStatusEvent.StatusRequestEvent event) {
-        if (config == null) config = new MaintenanceModeConfig();
-        if (config.isEnabled()) {
-            String message = config.getMotd();
+        if (MaintenanceModeConfig.INSTANCE.isEnabled()) {
+            String message = MaintenanceModeConfig.INSTANCE.getMotd();
             if (message != null && !message.isEmpty())
                 event.setNewStatus(ChatUtils.format(message));
         }
     }
 
+    @CraterEventListener
+    public void serverShutdownEvent(CraterServerLifecycleEvent.Stopped event) {
+        if (resetOnStartup && MaintenanceModeConfig.INSTANCE.isEnabled()) {
+            MaintenanceModeConfig.INSTANCE.setEnabled(false);
+            MaintenanceModeConfig.INSTANCE.saveConfig(MaintenanceModeConfig.INSTANCE);
+        }
+
+        MaintenanceSchedule.INSTANCE.shutDown();
+    }
+
     public void kickAllPlayers(String message) {
-        if (mcServer != null && config != null) {
+        if (mcServer != null && MaintenanceModeConfig.INSTANCE != null) {
             mcServer.getPlayers().forEach(serverPlayer -> {
-                if (config.getAllowedUsers().stream().noneMatch(allowedUser -> allowedUser.getUuid().toString().equals(serverPlayer.getStringUUID()))) {
-                    serverPlayer.disconnect(Component.text(message));
+                if (MaintenanceModeConfig.INSTANCE.getAllowedUsers().stream().noneMatch(allowedUser -> allowedUser.getUuid().equals(serverPlayer.getStringUUID()))) {
+                    serverPlayer.disconnect(ChatUtils.format(message));
                 }
             });
+        }
+    }
+
+    public void broadcastMessage(String message) {
+        if (mcServer != null) {
+            mcServer.broadcastSystemMessage(ChatUtils.format(message), false);
         }
     }
 
