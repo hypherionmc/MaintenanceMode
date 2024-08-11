@@ -73,8 +73,8 @@ publisher {
     setVersion(project.version)
     setArtifact(tasks.remapJar)
 
-    setDisplayName("[Fabric 1.21.0] Maintenance Mode - ${project.version}")
-    setGameVersions("1.21")
+    setDisplayName("[Fabric 1.21.x] Maintenance Mode - ${project.version}")
+    setGameVersions("1.21", "1.21.1")
     setLoaders(ModLoader.FABRIC, ModLoader.QUILT)
     setCurseEnvironment(CurseEnvironment.SERVER)
 }
