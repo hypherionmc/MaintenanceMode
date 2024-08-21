@@ -1,39 +1,34 @@
 def projectName = "Maintenance Mode";
 def projectIcon = "https://cdn.modrinth.com/data/QOkEkSap/3470afc6ab2b3cae086df640e0258940f4dd4261.png";
-def JDK = "21";
-def majorMc = "1.21";
-def modLoaders = "neoforge|fabric|quilt";
-def supportedMc = "1.21";
-def reltype = "snapshot";
 
 pipeline {
     agent {
         docker {
-            image "registry.firstdark.dev/java${JDK}:latest"
+            image "registry.firstdark.dev/java17:latest"
             alwaysPull true
             args '-v gradle-cache:/home/gradle/.gradle'
-        }
-    }
+       }
+   }
 
-    environment {
-        GRADLE_USER_HOME = '/home/gradle/.gradle'
-    }
+   environment {
+       GRADLE_USER_HOME = '/home/gradle/.gradle'
+   }
 
     stages {
         stage("Notify Discord") {
             steps {
                 discordSend webhookURL: env.SSS_WEBHOOK,
-                        title: "Deploy Started: ${projectName} ${majorMc} Deploy #${BUILD_NUMBER}",
+                        title: "Deploy Started: ${projectName} Universal Deploy #${BUILD_NUMBER}",
                         link: env.BUILD_URL,
                         result: 'SUCCESS',
                         description: "Build: [${BUILD_NUMBER}](${env.BUILD_URL})"
             }
         }
 
-        stage("Prepare") {
+        stage("Build") {
             steps {
                 sh "chmod +x ./gradlew"
-                sh "./gradlew build -PreleaseType=${reltype}"
+                sh "./gradlew clean build -PreleaseType=snapshot"
             }
         }
     }
@@ -41,14 +36,16 @@ pipeline {
     post {
         always {
             sh "./gradlew --stop"
-            archiveArtifacts artifacts: 'artifacts/*.jar'
+            archiveArtifacts artifacts: 'build/libs/*.jar'
 
             fddsnapshotter apiKey: env.PLATFORM_KEY,
                 projectSlug: "mmode",
                 projectName: "${projectName}",
                 projectIcon: "${projectIcon}",
-                modLoaders: "${modLoaders}",
-                minecraftVersions: "${supportedMc}",
+                modLoaders: "forge|neoforge|fabric|quilt",
+                minecraftVersions: "1.18.2|1.19.2|1.19.3|1.19.4|1.20|1.20.1|1.20.2|1.20.3|1.20.4|1.21",
+                type: "snapshot",
+                dependsOn: "required:craterlib",
                 failWebhook: env.SSS_WEBHOOK,
                 publishWebhooks: "${env.SSS_WEBHOOK}|${env.FDD_WH}"
 

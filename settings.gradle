@@ -11,6 +11,3 @@ pluginManagement {
 }
 
 rootProject.name = 'MaintenanceMode'
-//include("Common", "Fabric", "NeoForge")
-
-

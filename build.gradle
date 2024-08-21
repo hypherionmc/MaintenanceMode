@@ -1,9 +1,11 @@
+import com.hypherionmc.modpublisher.properties.ReleaseType
+
 plugins {
     id 'java'
     id 'com.github.johnrengelman.shadow' version '8.1.1'
     id "xyz.wagyourtail.unimined" version "1.2.9"
     id "com.hypherionmc.modutils.modpublisher" version "2.1.+"
-    id "com.hypherionmc.modutils.orion" version "1.0.+"
+    id "com.hypherionmc.modutils.orion" version "1.0.20"
 }
 
 orion.setup {
@@ -17,6 +19,11 @@ orion.setup {
         var relType = project.properties["releaseType"] ?: "${release_type}"
         identifier("${relType}")
     }
+
+    tools {
+        lombok()
+        noLoader()
+    }
 }
 
 group = project_group
@@ -24,7 +31,6 @@ archivesBaseName = "${mod_name.replace(" ", "")}-Universal"
 
 repositories {
     mavenCentral()
-    mavenLocal()
 }
 
 configurations {
@@ -35,15 +41,10 @@ configurations {
 }
 
 dependencies {
-    shade("org.apache.commons:commons-compress:${commons_compress}")
     shade("com.coreoz:wisp:${wisp}")
     shade("ch.eitchnet:cron:${cron}")
 
-    compileOnly("org.projectlombok:lombok:${lombok}")
-    annotationProcessor("org.projectlombok:lombok:${lombok}")
-
-    implementation "com.hypherionmc.craterlib:CraterLib-Common-1.21:2.1.0+port.1:dev"
-    implementation "com.hypherionmc.noloaderthanks:noloaderthanks:1.0.0"
+    implementation "com.hypherionmc.craterlib:CraterLib-Common-1.20.4:${craterlib}:dev"
 }
 
 jar {
@@ -88,7 +89,7 @@ unimined.minecraft {
 
 tasks.withType(JavaCompile).configureEach {
     it.options.encoding = 'UTF-8'
-    it.options.release = 21
+    it.options.release = 17
 }
 
 tasks.withType(GenerateModuleMetadata).configureEach {
@@ -111,7 +112,6 @@ shadowJar {
     setArchiveClassifier(null)
 
     dependencies {
-        relocate "org.apache.commons.compress", "${shadowPath}.apache.commons.compress"
         relocate "fc.cron", "${shadowPath}.cron"
         relocate "com.coreoz.wisp", "${shadowPath}.coreoz.wisp"
     }
@@ -122,4 +122,36 @@ shadowJar {
 
 shadowJar.doLast {
     delete(jar.getArchiveFile())
+}
+
+publisher {
+    apiKeys {
+        modrinth(System.getenv("MODRINTH_TOKEN"))
+        curseforge(System.getenv("CURSE_TOKEN"))
+        nightbloom(System.getenv("PLATFORM_KEY"))
+    }
+
+    setCurseID(curse_id)
+    setModrinthID(modrinth_id)
+    setNightbloomID("mmode")
+    setProjectVersion(project.version.toString())
+    setReleaseType(ReleaseType.RELEASE)
+    setChangelog("https://raw.githubusercontent.com/hypherionmc/changelogs/main/mmode/combo.md")
+    setDisplayName("Maintenance Mode Universal - ${project.version}")
+    setGameVersions("1.18.2", "1.19.2", "1.19.3", "1.19.4", "1.20", "1.20.1", "1.20.2", "1.20.3", "1.20.4", "1.21", "1.21.1")
+    setLoaders("forge", "fabric", "quilt", "neoforge")
+    setCurseEnvironment("both")
+    setArtifact(shadowJar)
+
+    modrinthDepends {
+        required("Nn8Wasaq")
+    }
+
+    curseDepends {
+        required("craterlib")
+    }
+
+    nightbloomDepends {
+        required("craterlib")
+    }
 }
