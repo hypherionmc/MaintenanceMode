@@ -19,7 +19,7 @@
     "environment": "server",
     "entrypoints": {
       "server": [
-        "me.hypherionmc.mmode.loaders.fabric.MaintenanceModeFabric"
+        "com.hypherionmc.mmode.loaders.fabric.MaintenanceModeFabric"
       ]
     },
 

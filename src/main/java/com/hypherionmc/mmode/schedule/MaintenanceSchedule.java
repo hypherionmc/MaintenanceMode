@@ -1,10 +1,10 @@
-package me.hypherionmc.mmode.schedule;
+package com.hypherionmc.mmode.schedule;
 
 import com.coreoz.wisp.Scheduler;
 import com.coreoz.wisp.schedule.cron.CronExpressionSchedule;
-import me.hypherionmc.mmode.CommonClass;
-import me.hypherionmc.mmode.ModConstants;
-import me.hypherionmc.mmode.config.MaintenanceModeConfig;
+import com.hypherionmc.mmode.CommonClass;
+import com.hypherionmc.mmode.ModConstants;
+import com.hypherionmc.mmode.config.MaintenanceModeConfig;
 
 import java.time.Duration;
 

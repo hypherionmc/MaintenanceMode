@@ -1,25 +1,22 @@
-package me.hypherionmc.mmode.config;
+package com.hypherionmc.mmode.config;
 
 import com.hypherionmc.craterlib.core.config.AbstractConfig;
 import com.hypherionmc.craterlib.core.config.ConfigController;
-import com.hypherionmc.craterlib.core.config.ModuleConfig;
 import com.hypherionmc.craterlib.core.config.annotations.NoConfigScreen;
 import com.hypherionmc.craterlib.core.config.formats.JsonConfigFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import me.hypherionmc.mmode.ModConstants;
+import com.hypherionmc.mmode.ModConstants;
 import org.apache.commons.io.FileUtils;
 import shadow.hypherionmc.moonconfig.core.conversion.ObjectConverter;
-import shadow.hypherionmc.moonconfig.core.file.CommentedFileConfig;
 import shadow.hypherionmc.moonconfig.core.file.FileConfig;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Getter
 @Setter

@@ -1,4 +1,4 @@
-package me.hypherionmc.mmode;
+package com.hypherionmc.mmode;
 
 import com.google.common.base.Preconditions;
 import com.hypherionmc.craterlib.api.events.server.CraterRegisterCommandEvent;
@@ -9,11 +9,11 @@ import com.hypherionmc.craterlib.core.event.annot.CraterEventListener;
 import com.hypherionmc.craterlib.nojang.network.protocol.status.WrappedServerStatus;
 import com.hypherionmc.craterlib.nojang.server.BridgedMinecraftServer;
 import com.hypherionmc.craterlib.utils.ChatUtils;
+import com.hypherionmc.mmode.commands.MaintenanceModeCommand;
+import com.hypherionmc.mmode.config.MaintenanceModeConfig;
+import com.hypherionmc.mmode.schedule.MaintenanceSchedule;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import me.hypherionmc.mmode.commands.MaintenanceModeCommand;
-import me.hypherionmc.mmode.config.MaintenanceModeConfig;
-import me.hypherionmc.mmode.schedule.MaintenanceSchedule;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

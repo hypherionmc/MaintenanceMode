@@ -1,4 +1,4 @@
-package me.hypherionmc.mmode;
+package com.hypherionmc.mmode;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

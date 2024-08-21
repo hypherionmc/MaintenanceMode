@@ -1,14 +1,14 @@
-package me.hypherionmc.mmode.commands;
+package com.hypherionmc.mmode.commands;
 
 import com.hypherionmc.craterlib.api.commands.CraterCommand;
 import com.hypherionmc.craterlib.api.events.server.CraterRegisterCommandEvent;
 import com.hypherionmc.craterlib.nojang.authlib.BridgedGameProfile;
 import com.hypherionmc.craterlib.nojang.commands.BridgedCommandSourceStack;
-import me.hypherionmc.mmode.CommonClass;
-import me.hypherionmc.mmode.ModConstants;
-import me.hypherionmc.mmode.config.MaintenanceModeConfig;
-import me.hypherionmc.mmode.schedule.MaintenanceSchedule;
-import me.hypherionmc.mmode.util.BackupUtil;
+import com.hypherionmc.mmode.schedule.MaintenanceSchedule;
+import com.hypherionmc.mmode.CommonClass;
+import com.hypherionmc.mmode.ModConstants;
+import com.hypherionmc.mmode.config.MaintenanceModeConfig;
+import com.hypherionmc.mmode.util.BackupUtil;
 import shadow.kyori.adventure.text.Component;
 import shadow.kyori.adventure.text.format.NamedTextColor;
 

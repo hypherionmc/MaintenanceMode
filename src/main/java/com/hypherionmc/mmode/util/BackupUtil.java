@@ -1,6 +1,6 @@
-package me.hypherionmc.mmode.util;
+package com.hypherionmc.mmode.util;
 
-import me.hypherionmc.mmode.ModConstants;
+import com.hypherionmc.mmode.ModConstants;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.utils.IOUtils;

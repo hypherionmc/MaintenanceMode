@@ -104,7 +104,7 @@ processResources {
     }
 }
 
-var shadowPath = "me.hypherionmc.mmode.shadow"
+var shadowPath = "com.hypherionmc.mmode.shadow"
 
 shadowJar {
     from sourceSets.main.output

@@ -1,7 +1,7 @@
-package me.hypherionmc.mmode.loaders.fabric;
+package com.hypherionmc.mmode.loaders.fabric;
 
 import com.hypherionmc.craterlib.core.event.CraterEventBus;
-import me.hypherionmc.mmode.CommonClass;
+import com.hypherionmc.mmode.CommonClass;
 import net.fabricmc.api.DedicatedServerModInitializer;
 
 public class MaintenanceModeFabric implements DedicatedServerModInitializer {
