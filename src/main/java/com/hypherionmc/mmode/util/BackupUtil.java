@@ -1,8 +1,6 @@
 package com.hypherionmc.mmode.util;
 
 import com.hypherionmc.mmode.ModConstants;
-import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
-import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.utils.IOUtils;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,6 +14,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.SignStyle;
 import java.time.temporal.ChronoField;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 public final class BackupUtil {
 
@@ -62,7 +62,7 @@ public final class BackupUtil {
 
 
     public static void createZipFile(File zipFileName, File fileOrDirectoryToZip) {
-        try (ZipArchiveOutputStream stream = new ZipArchiveOutputStream(new BufferedOutputStream(Files.newOutputStream(zipFileName.toPath())))) {
+        try (ZipOutputStream stream = new ZipOutputStream(new BufferedOutputStream(Files.newOutputStream(zipFileName.toPath())))) {
             addFileToZipStream(stream, fileOrDirectoryToZip, null);
         } catch (IOException e) {
             ModConstants.LOG.error("Failed to create backup at {}", zipFileName.getAbsolutePath(), e);
@@ -71,21 +71,21 @@ public final class BackupUtil {
         ModConstants.LOG.info("Created backup at {}", zipFileName);
     }
 
-    private static void addFileToZipStream(ZipArchiveOutputStream zipArchiveOutputStream, File fileToZip, @Nullable String base) throws IOException {
+    private static void addFileToZipStream(ZipOutputStream zipArchiveOutputStream, File fileToZip, @Nullable String base) throws IOException {
         String entryName = base == null ? fileToZip.getName() : String.format("%s/%s", base, fileToZip.getName());
 
-        ZipArchiveEntry zipArchiveEntry = new ZipArchiveEntry(fileToZip, entryName);
-        zipArchiveOutputStream.putArchiveEntry(zipArchiveEntry);
+        ZipEntry zipArchiveEntry = new ZipEntry(entryName);
+        zipArchiveOutputStream.putNextEntry(zipArchiveEntry);
 
         if(fileToZip.isFile() && !fileToZip.getName().contains(".lock")) {
             try(FileInputStream stream = new FileInputStream(fileToZip)) {
                 IOUtils.copy(stream, zipArchiveOutputStream);
-                zipArchiveOutputStream.closeArchiveEntry();
+                zipArchiveOutputStream.closeEntry();
             } catch (Exception e) {
                 ModConstants.LOG.error("Failed to add file {}, because: {}", fileToZip.getAbsolutePath(), e.getMessage());
             }
         } else {
-            zipArchiveOutputStream.closeArchiveEntry();
+            zipArchiveOutputStream.closeEntry();
             File[] files = fileToZip.listFiles();
             if (files == null)
                 return;
