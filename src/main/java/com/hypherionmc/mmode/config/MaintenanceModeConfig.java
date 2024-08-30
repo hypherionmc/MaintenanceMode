@@ -4,6 +4,7 @@ import com.hypherionmc.craterlib.core.config.AbstractConfig;
 import com.hypherionmc.craterlib.core.config.ConfigController;
 import com.hypherionmc.craterlib.core.config.annotations.NoConfigScreen;
 import com.hypherionmc.craterlib.core.config.formats.JsonConfigFormat;
+import com.hypherionmc.mmode.CommonClass;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -117,5 +118,6 @@ public final class MaintenanceModeConfig extends AbstractConfig<MaintenanceModeC
     public void configReloaded() {
         INSTANCE = readConfig(this);
         hasConfigLoaded = true;
+        CommonClass.INSTANCE.loadIcons();
     }
 }

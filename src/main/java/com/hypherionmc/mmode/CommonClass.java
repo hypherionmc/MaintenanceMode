@@ -38,17 +38,7 @@ public final class CommonClass {
         mcServer = event.getServer();
         MaintenanceSchedule.INSTANCE.initScheduler();
 
-        if (MaintenanceModeConfig.INSTANCE.getMaintenanceIcon() != null && !MaintenanceModeConfig.INSTANCE.getMaintenanceIcon().isEmpty()) {
-            File file = new File(MaintenanceModeConfig.INSTANCE.getMaintenanceIcon());
-            if (!file.exists())
-                return;
-
-            favicon = loadIcon(file);
-        }
-
-        if (!new File("server-icon.png").exists()) {
-            backupIcon = loadIcon(Thread.currentThread().getContextClassLoader().getResourceAsStream("mmicon.png"));
-        }
+        loadIcons();
 
         if (MaintenanceModeConfig.INSTANCE != null) {
             ModConstants.LOG.info(MaintenanceModeConfig.INSTANCE.isEnabled() ? "Maintenance mode is active!" : "Maintenance mode is off");
@@ -100,6 +90,20 @@ public final class CommonClass {
         }
 
         MaintenanceSchedule.INSTANCE.shutDown();
+    }
+
+    public void loadIcons() {
+        if (MaintenanceModeConfig.INSTANCE.getMaintenanceIcon() != null && !MaintenanceModeConfig.INSTANCE.getMaintenanceIcon().isEmpty()) {
+            File file = new File(MaintenanceModeConfig.INSTANCE.getMaintenanceIcon());
+            if (!file.exists())
+                return;
+
+            favicon = loadIcon(file);
+        }
+
+        if (!new File("server-icon.png").exists()) {
+            backupIcon = loadIcon(Thread.currentThread().getContextClassLoader().getResourceAsStream("mmicon.png"));
+        }
     }
 
     public void kickAllPlayers(String message) {
