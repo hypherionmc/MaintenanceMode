@@ -1,7 +1,7 @@
 package com.hypherionmc.mmode.util;
 
 import com.hypherionmc.mmode.ModConstants;
-import org.apache.commons.compress.utils.IOUtils;
+import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedOutputStream;
@@ -60,7 +60,6 @@ public final class BackupUtil {
         backupThread.start();
     }
 
-
     public static void createZipFile(File zipFileName, File fileOrDirectoryToZip) {
         try (ZipOutputStream stream = new ZipOutputStream(new BufferedOutputStream(Files.newOutputStream(zipFileName.toPath())))) {
             addFileToZipStream(stream, fileOrDirectoryToZip, null);
@@ -74,18 +73,18 @@ public final class BackupUtil {
     private static void addFileToZipStream(ZipOutputStream zipArchiveOutputStream, File fileToZip, @Nullable String base) throws IOException {
         String entryName = base == null ? fileToZip.getName() : String.format("%s/%s", base, fileToZip.getName());
 
-        ZipEntry zipArchiveEntry = new ZipEntry(entryName);
-        zipArchiveOutputStream.putNextEntry(zipArchiveEntry);
-
         if(fileToZip.isFile() && !fileToZip.getName().contains(".lock")) {
+            ZipEntry zipArchiveEntry = new ZipEntry(entryName);
+            zipArchiveOutputStream.putNextEntry(zipArchiveEntry);
+
             try(FileInputStream stream = new FileInputStream(fileToZip)) {
                 IOUtils.copy(stream, zipArchiveOutputStream);
-                zipArchiveOutputStream.closeEntry();
             } catch (Exception e) {
                 ModConstants.LOG.error("Failed to add file {}, because: {}", fileToZip.getAbsolutePath(), e.getMessage());
+            } finally {
+                zipArchiveOutputStream.closeEntry();
             }
         } else {
-            zipArchiveOutputStream.closeEntry();
             File[] files = fileToZip.listFiles();
             if (files == null)
                 return;
