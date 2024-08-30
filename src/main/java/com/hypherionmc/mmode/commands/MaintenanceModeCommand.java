@@ -217,6 +217,7 @@ public class MaintenanceModeCommand {
         MaintenanceModeConfig.INSTANCE.setAllowedUsers(allowedUsers);
         saveConfig(stack);
         CommonClass.INSTANCE.isDirty.set(true);
+        CommonClass.INSTANCE.kickAllPlayers(MaintenanceModeConfig.INSTANCE.getMessage());
         return 1;
     }
 
