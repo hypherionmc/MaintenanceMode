@@ -34,7 +34,7 @@ public class MaintenanceModeCommand {
                 .then(CraterCommand.literal("schedule").requiresPermission(3).withNode("maintenance.schedule")
                         .then(CraterCommand.literal("disableOnRestart").requiresPermission(3).withNode("maintenance.changerestart").withBoolArgument("untilRestart", (ctx, value, stack) -> {
                             MaintenanceModeConfig.INSTANCE.getSchedule().setDisableOnRestart(value);
-                            MaintenanceModeCommand.saveConfig(MaintenanceModeConfig.INSTANCE, stack);
+                            MaintenanceModeCommand.saveConfig(stack);
                             return 1;
                         }))
                         .then(CraterCommand.literal("untilRestart").requiresPermission(3).withNode("maintenance.untilrestart").execute(MaintenanceModeCommand::scheduleTillRestart))
@@ -102,7 +102,7 @@ public class MaintenanceModeCommand {
         }
 
         MaintenanceModeConfig.INSTANCE.setDoBackup(enabled);
-        saveConfig(MaintenanceModeConfig.INSTANCE, stack);
+        saveConfig(stack);
 
         stack.sendSuccess(() -> Component.text("Maintenance Mode Backups: ").append(Component.text((enabled ? "Enabled" : "Disabled")).color(NamedTextColor.YELLOW)), false);
         CommonClass.INSTANCE.isDirty.set(true);
@@ -191,7 +191,7 @@ public class MaintenanceModeCommand {
 
         MaintenanceModeConfig.INSTANCE.setAllowedUsers(allowedUsers);
 
-        saveConfig(MaintenanceModeConfig.INSTANCE, stack);
+        saveConfig(stack);
         CommonClass.INSTANCE.isDirty.set(true);
         return 1;
     }
@@ -215,14 +215,14 @@ public class MaintenanceModeCommand {
         }
 
         MaintenanceModeConfig.INSTANCE.setAllowedUsers(allowedUsers);
-        saveConfig(MaintenanceModeConfig.INSTANCE, stack);
+        saveConfig(stack);
         CommonClass.INSTANCE.isDirty.set(true);
         return 1;
     }
 
-    private static void saveConfig(MaintenanceModeConfig config, BridgedCommandSourceStack stack) {
+    private static void saveConfig(BridgedCommandSourceStack stack) {
         try {
-            MaintenanceModeConfig.INSTANCE.saveConfig(config);
+            MaintenanceModeConfig.INSTANCE.saveConfig(MaintenanceModeConfig.INSTANCE);
         } catch (Exception e) {
             stack.sendFailure(Component.text("Failed to save config. Please see server log"));
             ModConstants.LOG.error("Failed to save config: {}", e.getMessage());
@@ -238,7 +238,7 @@ public class MaintenanceModeCommand {
         }
 
         MaintenanceModeConfig.INSTANCE.setMessage(message);
-        saveConfig(MaintenanceModeConfig.INSTANCE, stack);
+        saveConfig(stack);
         CommonClass.INSTANCE.isDirty.set(true);
         return 1;
     }
@@ -249,7 +249,7 @@ public class MaintenanceModeCommand {
         }
 
         MaintenanceModeConfig.INSTANCE.setMotd(message);
-        saveConfig(MaintenanceModeConfig.INSTANCE, stack);
+        saveConfig(stack);
         CommonClass.INSTANCE.isDirty.set(true);
         return 1;
     }
