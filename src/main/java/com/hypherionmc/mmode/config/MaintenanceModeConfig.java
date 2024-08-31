@@ -37,7 +37,8 @@ public final class MaintenanceModeConfig extends AbstractConfig<MaintenanceModeC
     private String motd = "This server is currently undergoing maintenance!";
     private String maintenanceIcon = "";
     private Schedule schedule = new Schedule();
-    private int configVersion = 2;
+    private boolean kickOnlinePlayers = true;
+    private int configVersion = 3;
     private List<AllowedUser> allowedUsers = new ArrayList<>();
 
     @Getter

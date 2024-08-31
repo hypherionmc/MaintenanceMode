@@ -107,7 +107,10 @@ public final class CommonClass {
     }
 
     public void kickAllPlayers(String message) {
-        if (mcServer != null && MaintenanceModeConfig.INSTANCE != null) {
+        if (MaintenanceModeConfig.INSTANCE != null && !MaintenanceModeConfig.INSTANCE.isKickOnlinePlayers())
+            return;
+
+        if (mcServer != null) {
             mcServer.getPlayers().forEach(serverPlayer -> {
                 if (MaintenanceModeConfig.INSTANCE.getAllowedUsers().stream().noneMatch(allowedUser -> allowedUser.getUuid().equals(serverPlayer.getStringUUID()))) {
                     serverPlayer.disconnect(ChatUtils.format(message));
