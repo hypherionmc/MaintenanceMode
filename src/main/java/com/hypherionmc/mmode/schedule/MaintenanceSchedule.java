@@ -2,8 +2,10 @@ package com.hypherionmc.mmode.schedule;
 
 import com.coreoz.wisp.Scheduler;
 import com.coreoz.wisp.schedule.cron.CronExpressionSchedule;
+import com.hypherionmc.craterlib.core.event.CraterEventBus;
 import com.hypherionmc.mmode.CommonClass;
 import com.hypherionmc.mmode.ModConstants;
+import com.hypherionmc.mmode.api.events.MaintenanceModeEvent;
 import com.hypherionmc.mmode.config.MaintenanceModeConfig;
 
 import java.time.Duration;
@@ -45,6 +47,7 @@ public class MaintenanceSchedule {
     }
 
     private void startMaintenance() {
+        CraterEventBus.INSTANCE.postEvent(new MaintenanceModeEvent.MaintenanceStart());
         CommonClass.INSTANCE.broadcastMessage("Maintenance is starting");
         MaintenanceModeConfig.INSTANCE.setEnabled(true);
         CommonClass.INSTANCE.resetOnStartup = MaintenanceModeConfig.INSTANCE.getSchedule().isDisableOnRestart();
@@ -54,6 +57,7 @@ public class MaintenanceSchedule {
     }
 
     private void endMaintenance() {
+        CraterEventBus.INSTANCE.postEvent(new MaintenanceModeEvent.MaintenanceEnd());
         CommonClass.INSTANCE.broadcastMessage("Maintenance is ending");
         MaintenanceModeConfig.INSTANCE.setEnabled(false);
         CommonClass.INSTANCE.isDirty.set(true);

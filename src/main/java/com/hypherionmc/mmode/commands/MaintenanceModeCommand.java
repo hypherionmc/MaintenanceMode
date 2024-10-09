@@ -2,8 +2,10 @@ package com.hypherionmc.mmode.commands;
 
 import com.hypherionmc.craterlib.api.commands.CraterCommand;
 import com.hypherionmc.craterlib.api.events.server.CraterRegisterCommandEvent;
+import com.hypherionmc.craterlib.core.event.CraterEventBus;
 import com.hypherionmc.craterlib.nojang.authlib.BridgedGameProfile;
 import com.hypherionmc.craterlib.nojang.commands.BridgedCommandSourceStack;
+import com.hypherionmc.mmode.api.events.MaintenanceModeEvent;
 import com.hypherionmc.mmode.schedule.MaintenanceSchedule;
 import com.hypherionmc.mmode.CommonClass;
 import com.hypherionmc.mmode.ModConstants;
@@ -161,6 +163,13 @@ public class MaintenanceModeCommand {
 
         stack.sendSuccess(() -> Component.text("Maintenance Mode: ").append(Component.text((MaintenanceModeConfig.INSTANCE.isEnabled() ? "Enabled" : "Disabled")).color(NamedTextColor.YELLOW)), false);
         CommonClass.INSTANCE.isDirty.set(true);
+
+        if (enabled) {
+            CraterEventBus.INSTANCE.postEvent(new MaintenanceModeEvent.MaintenanceStart());
+        } else {
+            CraterEventBus.INSTANCE.postEvent(new MaintenanceModeEvent.MaintenanceEnd());
+        }
+
         return 1;
     }
 
