@@ -6,6 +6,7 @@ import com.hypherionmc.craterlib.api.events.server.CraterServerLifecycleEvent;
 import com.hypherionmc.craterlib.api.events.server.PlayerPreLoginEvent;
 import com.hypherionmc.craterlib.api.events.server.ServerStatusEvent;
 import com.hypherionmc.craterlib.core.event.annot.CraterEventListener;
+import com.hypherionmc.craterlib.core.platform.ModloaderEnvironment;
 import com.hypherionmc.craterlib.nojang.network.protocol.status.WrappedServerStatus;
 import com.hypherionmc.craterlib.nojang.server.BridgedMinecraftServer;
 import com.hypherionmc.craterlib.utils.ChatUtils;
@@ -19,6 +20,8 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -31,6 +34,7 @@ public final class CommonClass {
     private Optional<WrappedServerStatus.WrappedFavicon> favicon = Optional.empty();
     private Optional<WrappedServerStatus.WrappedFavicon> backupIcon = Optional.empty();
     public boolean resetOnStartup = false;
+    public static final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
     @CraterEventListener
     public void serverStartedEvent(CraterServerLifecycleEvent.Started event) {
@@ -66,6 +70,10 @@ public final class CommonClass {
 
     @CraterEventListener
     public void requestFavIconEvent(ServerStatusEvent.FaviconRequestEvent event) {
+        if (!MaintenanceModeConfig.INSTANCE.isEnabled() && ModloaderEnvironment.INSTANCE.isModLoaded("minimotd")) {
+            return;
+        }
+
         if (!MaintenanceModeConfig.INSTANCE.isEnabled() && backupIcon.isPresent())
             event.setNewIcon(backupIcon);
 
@@ -84,6 +92,7 @@ public final class CommonClass {
 
     @CraterEventListener
     public void serverShutdownEvent(CraterServerLifecycleEvent.Stopped event) {
+        executor.shutdownNow();
         if (resetOnStartup && MaintenanceModeConfig.INSTANCE.isEnabled()) {
             MaintenanceModeConfig.INSTANCE.setEnabled(false);
             MaintenanceModeConfig.INSTANCE.saveConfig(MaintenanceModeConfig.INSTANCE);
