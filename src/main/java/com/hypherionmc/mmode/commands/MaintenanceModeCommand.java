@@ -45,6 +45,8 @@ public class MaintenanceModeCommand {
                                         .then(CraterCommand.literal("end").requiresPermission(3).withNode("maintenance.endschedule").withPhraseArgument("cron", (ctx, value, stack) -> scheduleEnd(stack, value)))
                         )
                 )
+                .then(CraterCommand.literal("addGroup").requiresPermission(3).withNode("maintenance.adduser").withStringArgument("lpgroup", (player, group, ctx) -> addAllowedPlayer(ctx, group)))
+                .then(CraterCommand.literal("removeGroup").requiresPermission(3).withNode("maintenance.removeuser").withStringArgument("withStringArgument", (player, group, ctx) -> removeAllowedPlayer(ctx, group)))
                 .then(CraterCommand.literal("removeAllowed").requiresPermission(3).withNode("maintenance.removeuser").withGameProfilesArgument("targets", (player, gameProfiles, ctx) -> removeAllowedPlayer(ctx, gameProfiles)));
 
         event.registerCommand(cmd);
@@ -126,12 +128,24 @@ public class MaintenanceModeCommand {
         }
 
         String[] names = MaintenanceModeConfig.INSTANCE.getAllowedUsers().stream().map(MaintenanceModeConfig.AllowedUser::getName).toArray(String[]::new);
+        String[] lpGroups = MaintenanceModeConfig.INSTANCE.getAllowedLuckpermsGroups().toArray(String[]::new);
 
-        if (names.length == 0) {
-            stack.sendSuccess(() -> Component.text("No users are allowed to join"), false);
-        } else {
-            stack.sendSuccess(() -> Component.text(String.format("There are %s allowed player(s): %s", names.length, String.join(", ", names))), false);
+        String returnS = "No users and groups are allowed to join";
+
+        if (names.length > 0) {
+            returnS = String.format("There are %s allowed player(s): %s", names.length, String.join(", ", names));
         }
+
+        if (lpGroups.length > 0) {
+            if (names.length > 0) {
+                returnS += "\n" + String.format("There are %s allowed luckperms groups(s): %s", lpGroups.length, String.join(", ", lpGroups));
+            } else {
+                returnS = String.format("There are %s allowed luckperms groups(s): %s", lpGroups.length, String.join(", ", lpGroups));
+            }
+        }
+
+        String finalReturnS = returnS;
+        stack.sendSuccess(() -> Component.text(finalReturnS), false);
 
         return 1;
     }
@@ -199,6 +213,29 @@ public class MaintenanceModeCommand {
         }
 
         MaintenanceModeConfig.INSTANCE.setAllowedUsers(allowedUsers);
+        stack.sendSuccess(() -> Component.text("User added to allowed list"), false);
+
+        saveConfig(stack);
+        CommonClass.INSTANCE.isDirty.set(true);
+        return 1;
+    }
+
+    private static int addAllowedPlayer(BridgedCommandSourceStack stack, String lpGroup)  {
+        if (MaintenanceModeConfig.INSTANCE == null) {
+            new MaintenanceModeConfig();
+        }
+
+        List<String> allowedUsers = MaintenanceModeConfig.INSTANCE.getAllowedLuckpermsGroups().isEmpty() ? new ArrayList<>() : MaintenanceModeConfig.INSTANCE.getAllowedLuckpermsGroups();
+
+        if (allowedUsers.stream().noneMatch(allowedUser -> allowedUser.equalsIgnoreCase(lpGroup))) {
+            allowedUsers.add(lpGroup);
+        } else {
+            stack.sendFailure(Component.text("Group already in allowed list"));
+
+        }
+
+        MaintenanceModeConfig.INSTANCE.setAllowedLuckpermsGroups(allowedUsers);
+        stack.sendSuccess(() -> Component.text("Group added to allowed list"), false);
 
         saveConfig(stack);
         CommonClass.INSTANCE.isDirty.set(true);
@@ -224,6 +261,30 @@ public class MaintenanceModeCommand {
         }
 
         MaintenanceModeConfig.INSTANCE.setAllowedUsers(allowedUsers);
+        saveConfig(stack);
+        CommonClass.INSTANCE.isDirty.set(true);
+        stack.sendSuccess(() -> Component.text("User removed from allowed list"), false);
+        CommonClass.INSTANCE.kickAllPlayers(MaintenanceModeConfig.INSTANCE.getMessage());
+        return 1;
+    }
+
+    private static int removeAllowedPlayer(BridgedCommandSourceStack stack, String lpGroup) {
+        if (MaintenanceModeConfig.INSTANCE == null) {
+            new MaintenanceModeConfig();
+        }
+
+        List<String> allowedUsers = MaintenanceModeConfig.INSTANCE.getAllowedLuckpermsGroups().isEmpty() ? new ArrayList<>() : MaintenanceModeConfig.INSTANCE.getAllowedLuckpermsGroups();
+        Optional<String> allowedUserOptional = allowedUsers.stream().filter(allowedUser -> allowedUser.equalsIgnoreCase(lpGroup)).findFirst();
+
+        if (allowedUserOptional.isPresent()) {
+            allowedUsers.remove(allowedUserOptional.get());
+        } else {
+            stack.sendFailure(Component.text("Group not found in allowed list"));
+            return 1;
+        }
+
+        MaintenanceModeConfig.INSTANCE.setAllowedLuckpermsGroups(allowedUsers);
+        stack.sendSuccess(() -> Component.text("Group removed from allowed list"), false);
         saveConfig(stack);
         CommonClass.INSTANCE.isDirty.set(true);
         CommonClass.INSTANCE.kickAllPlayers(MaintenanceModeConfig.INSTANCE.getMessage());

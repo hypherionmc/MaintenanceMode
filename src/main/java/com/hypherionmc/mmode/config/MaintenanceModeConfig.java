@@ -27,19 +27,21 @@ public final class MaintenanceModeConfig extends AbstractConfig<MaintenanceModeC
     // DO NOT REMOVE TRANSIENT HERE... OTHERWISE, THE STUPID CONFIG LIBRARY
     // WILL TRY TO WRITE THESE TO THE CONFIG
     public transient static MaintenanceModeConfig INSTANCE;
-    public transient static int configVer = 2;
+    public transient static int configVer = 4;
     public transient static boolean hasConfigLoaded = false;
     public transient static boolean wasReload = false;
 
     private boolean enabled = false;
     private boolean doBackup = false;
+    private boolean debug = false;
     private String message = "This server is currently in maintenance mode! Please check back later";
     private String motd = "This server is currently undergoing maintenance!";
     private String maintenanceIcon = "";
     private Schedule schedule = new Schedule();
     private boolean kickOnlinePlayers = true;
-    private int configVersion = 3;
+    private int configVersion = configVer;
     private List<AllowedUser> allowedUsers = new ArrayList<>();
+    private List<String> allowedLuckpermsGroups = new ArrayList<>();
 
     @Getter
     @Setter

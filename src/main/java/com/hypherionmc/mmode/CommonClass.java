@@ -5,10 +5,13 @@ import com.hypherionmc.craterlib.api.events.server.CraterRegisterCommandEvent;
 import com.hypherionmc.craterlib.api.events.server.CraterServerLifecycleEvent;
 import com.hypherionmc.craterlib.api.events.server.PlayerPreLoginEvent;
 import com.hypherionmc.craterlib.api.events.server.ServerStatusEvent;
+import com.hypherionmc.craterlib.compat.LuckPermsCompat;
 import com.hypherionmc.craterlib.core.event.annot.CraterEventListener;
 import com.hypherionmc.craterlib.core.platform.ModloaderEnvironment;
+import com.hypherionmc.craterlib.nojang.authlib.BridgedGameProfile;
 import com.hypherionmc.craterlib.nojang.network.protocol.status.WrappedServerStatus;
 import com.hypherionmc.craterlib.nojang.server.BridgedMinecraftServer;
+import com.hypherionmc.craterlib.nojang.world.entity.player.BridgedPlayer;
 import com.hypherionmc.craterlib.utils.ChatUtils;
 import com.hypherionmc.mmode.commands.MaintenanceModeCommand;
 import com.hypherionmc.mmode.config.MaintenanceModeConfig;
@@ -56,38 +59,64 @@ public final class CommonClass {
 
     @CraterEventListener
     public void playerPreLoginEvent(PlayerPreLoginEvent event) {
-        // Check if maintenance mode is enabled and kick the player
-        if (MaintenanceModeConfig.INSTANCE.isEnabled()) {
-            if (MaintenanceModeConfig.INSTANCE.getAllowedUsers().stream().noneMatch(allowedUser -> allowedUser.getUuid().equals(event.getGameProfile().getId().toString()))) {
-                String message = MaintenanceModeConfig.INSTANCE.getMessage();
-                if (message == null || message.isEmpty())
-                    message = "Server is currently undergoing maintenance. Please try connecting again later";
+        try {
+            // Check if maintenance mode is enabled and kick the player
+            if (MaintenanceModeConfig.INSTANCE.isEnabled()) {
+                if (isNotAllowedToJoin(event.getGameProfile())) {
+                    String message = MaintenanceModeConfig.INSTANCE.getMessage();
+                    if (message == null || message.isEmpty())
+                        message = "Server is currently undergoing maintenance. Please try connecting again later";
 
-                event.setMessage(ChatUtils.format(message));
+                    event.setMessage(ChatUtils.format(message));
+                }
+            }
+        } catch (Exception e) {
+            if (MaintenanceModeConfig.INSTANCE.isDebug())
+                ModConstants.LOG.error("Failed to check if player is allowed to join", e);
+        }
+    }
+
+    private boolean isNotAllowedToJoin(BridgedGameProfile player) {
+        if (!MaintenanceModeConfig.INSTANCE.getAllowedLuckpermsGroups().isEmpty() && ModloaderEnvironment.INSTANCE.isModLoaded("luckperms")) {
+            for (String group : MaintenanceModeConfig.INSTANCE.getAllowedLuckpermsGroups()) {
+                if (LuckPermsCompat.INSTANCE.hasGroup(player.getId(), group))
+                    return false;
             }
         }
+
+        return MaintenanceModeConfig.INSTANCE.getAllowedUsers().stream().noneMatch(allowedUser -> allowedUser.getUuid().equals(player.getId().toString()));
     }
 
     @CraterEventListener
     public void requestFavIconEvent(ServerStatusEvent.FaviconRequestEvent event) {
-        if (!MaintenanceModeConfig.INSTANCE.isEnabled() && ModloaderEnvironment.INSTANCE.isModLoaded("minimotd")) {
-            return;
+        try {
+            if (!MaintenanceModeConfig.INSTANCE.isEnabled() && ModloaderEnvironment.INSTANCE.isModLoaded("minimotd")) {
+                return;
+            }
+
+            if (!MaintenanceModeConfig.INSTANCE.isEnabled() && backupIcon.isPresent())
+                event.setNewIcon(backupIcon);
+
+            if (MaintenanceModeConfig.INSTANCE.isEnabled() && favicon.isPresent())
+                event.setNewIcon(favicon);
+        } catch (Exception e) {
+            if (MaintenanceModeConfig.INSTANCE.isDebug())
+                ModConstants.LOG.error("Failed to update server icon", e);
         }
-
-        if (!MaintenanceModeConfig.INSTANCE.isEnabled() && backupIcon.isPresent())
-            event.setNewIcon(backupIcon);
-
-        if (MaintenanceModeConfig.INSTANCE.isEnabled() && favicon.isPresent())
-            event.setNewIcon(favicon);
     }
 
     @CraterEventListener
     public void requestServerStatus(ServerStatusEvent.StatusRequestEvent event) {
-        if (MaintenanceModeConfig.INSTANCE.isEnabled()) {
-            String message = MaintenanceModeConfig.INSTANCE.getMotd();
-            if (message != null && !message.isEmpty())
-                event.setNewStatus(ChatUtils.format(message));
-        }
+       try {
+           if (MaintenanceModeConfig.INSTANCE.isEnabled()) {
+               String message = MaintenanceModeConfig.INSTANCE.getMotd();
+               if (message != null && !message.isEmpty())
+                   event.setNewStatus(ChatUtils.format(message));
+           }
+       } catch (Exception e) {
+           if (MaintenanceModeConfig.INSTANCE.isDebug())
+               ModConstants.LOG.error("Failed to update server status", e);
+       }
     }
 
     @CraterEventListener
@@ -121,7 +150,7 @@ public final class CommonClass {
 
         if (mcServer != null) {
             mcServer.getPlayers().forEach(serverPlayer -> {
-                if (MaintenanceModeConfig.INSTANCE.getAllowedUsers().stream().noneMatch(allowedUser -> allowedUser.getUuid().equals(serverPlayer.getStringUUID()))) {
+                if (isNotAllowedToJoin(serverPlayer.getGameProfile())) {
                     serverPlayer.disconnect(ChatUtils.format(message));
                 }
             });

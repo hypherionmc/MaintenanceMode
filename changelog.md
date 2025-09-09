@@ -3,6 +3,12 @@
 **Bug Fixes**:
 
 - Fixed MOTD icon not updating when MiniMOTD is installed
+- Fix potential constant config upgrade issue due to incorrect version handling
+- Fix "add" and "remove" commands not sending feedback 
+
+**New Features**:
+
+- Access can now be granted by Luckperms Groups
 
 **Improvements**:
 
