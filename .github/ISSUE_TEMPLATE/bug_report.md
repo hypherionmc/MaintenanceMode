@@ -1,39 +1,102 @@
----
-name: Bug report
-about: Create a report to help us improve
-title: "[BUG] "
-labels: bug
-assignees: ''
+name: "🐞 Bug Report"
+description: Report a bug or unexpected behavior
+title: "[Bug]: "
+labels: ["Type: Bug"]
+body:
+- type: markdown
+  attributes:
+  value: "## 🐞 Bug Report\nPlease provide a clear description of the issue."
 
----
+- type: textarea
+  id: description
+  attributes:
+  label: "🐞 Description"
+  description: "Provide a detailed description about the bug you are experiencing"
+  placeholder: "When I launch my game, it sold my kidney on Facebook Marketplace.... etc"
+  validations:
+  required: true
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+- type: textarea
+  id: reproduction_steps
+  attributes:
+  label: "🔄 Steps to reproduce"
+  description: "List the steps to reproduce this bug."
+  placeholder: "1. Do this... 2. Click that... 3. See error"
+  validations:
+  required: true
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+- type: textarea
+  id: expected_behavior
+  attributes:
+  label: "✅ Expected behavior"
+  description: "What should have happened?"
+  placeholder: "I expected that..."
+  validations:
+  required: true
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+- type: textarea
+  id: actual_behavior
+  attributes:
+  label: "❌ Actual behavior"
+  description: "What actually happened?"
+  placeholder: "Instead, I saw..."
+  validations:
+  required: true
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+- type: input
+  id: minecraft_version
+  attributes:
+  label: "🎮 Minecraft Version"
+  description: "Which version of Minecraft are you using?"
+  placeholder: "e.g., 1.20.1"
+  validations:
+  required: true
 
-**Versions (DO NOT USE "LATEST"! I STEAL YOUR KNEE CAPS!):**
-- Minecraft Version:
-- Modloader
-    - [ ] Forge
-    - [ ] Fabric
-- Mod Loader Version:
-- Mod Version:
-- Java Version:
+- type: input
+  id: mod_version
+  attributes:
+  label: "🛠️ Mod Version"
+  description: "Which version of the mod are you using?"
+  placeholder: "e.g., 2.3.0"
+  validations:
+  required: true
 
-**Additional context**
-Add any other context about the problem here.
+- type: dropdown
+  id: mod_loader
+  attributes:
+  label: "📦 Mod Loader"
+  description: "Which mod loader are you using?"
+  options:
+  - Forge
+  - Fabric
+  - Quilt
+  - NeoForge
+  validations:
+  required: true
 
-**Crash Report**
-If the game crashed, please include your latest crash report here
+- type: input
+  id: mod_loader_version
+  attributes:
+  label: "🔧 Mod Loader Version"
+  description: "Which version of the mod loader are you using?"
+  placeholder: "e.g., 47.1.3 (for Forge)"
+  validations:
+  required: true
+
+- type: input
+  id: craterlib_version
+  attributes:
+  label: "📚 CraterLib Version"
+  description: "Which version of CraterLib are you using?"
+  placeholder: "e.g., 1.5.2"
+  validations:
+  required: true
+
+- type: textarea
+  id: logs
+  attributes:
+  label: "📜 Logs & Screenshots"
+  description: "Upload logs, screenshots, or error messages."
+  placeholder: "Drag and drop files here or paste logs."
+  validations:
+  required: false

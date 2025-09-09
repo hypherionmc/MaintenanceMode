@@ -1,20 +1,22 @@
----
-name: Feature request
-about: Suggest an idea for this project
-title: "[SUGGESTION]"
-labels: enhancement
-assignees: ''
+name: "✨ Feature Request"
+description: Suggest a new feature or improvement
+title: "[Feature]: "
+labels: ["Type: Enhancement"]
+body:
+- type: markdown
+  attributes:
+  value: "## ✨ Feature Request\nDescribe the feature or improvement."
 
----
+- type: textarea
+  id: feature_description
+  attributes:
+  label: "🚀 Description"
+  description: "What would you like to see?"
+  placeholder: "I want to add..."
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
-
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
-
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
-
-**Additional context**
-Add any other context or screenshots about the feature request here.
+- type: textarea
+  id: use_case
+  attributes:
+  label: "💡 Use Case"
+  description: "Why would this be useful?"
+  placeholder: "This feature helps because..."
