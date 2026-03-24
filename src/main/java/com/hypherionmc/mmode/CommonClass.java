@@ -1,18 +1,18 @@
 package com.hypherionmc.mmode;
 
 import com.google.common.base.Preconditions;
+import com.hypherionmc.craterlib.api.compat.LuckPermsCompat;
 import com.hypherionmc.craterlib.api.events.server.CraterRegisterCommandEvent;
 import com.hypherionmc.craterlib.api.events.server.CraterServerLifecycleEvent;
 import com.hypherionmc.craterlib.api.events.server.PlayerPreLoginEvent;
 import com.hypherionmc.craterlib.api.events.server.ServerStatusEvent;
-import com.hypherionmc.craterlib.compat.LuckPermsCompat;
+import com.hypherionmc.craterlib.api.game.authlib.CraterGameProfile;
+import com.hypherionmc.craterlib.api.game.network.protocol.status.CraterServerStatus;
+import com.hypherionmc.craterlib.api.game.server.CraterGameServer;
+import com.hypherionmc.craterlib.api.game.text.Text;
+import com.hypherionmc.craterlib.api.loader.CraterLoader;
 import com.hypherionmc.craterlib.core.event.annot.CraterEventListener;
-import com.hypherionmc.craterlib.core.platform.ModloaderEnvironment;
-import com.hypherionmc.craterlib.nojang.authlib.BridgedGameProfile;
-import com.hypherionmc.craterlib.nojang.network.protocol.status.WrappedServerStatus;
-import com.hypherionmc.craterlib.nojang.server.BridgedMinecraftServer;
-import com.hypherionmc.craterlib.nojang.world.entity.player.BridgedPlayer;
-import com.hypherionmc.craterlib.utils.ChatUtils;
+import com.hypherionmc.craterlib.impl.api.network.protocol.status.WrappedServerStatus;
 import com.hypherionmc.mmode.commands.MaintenanceModeCommand;
 import com.hypherionmc.mmode.config.MaintenanceModeConfig;
 import com.hypherionmc.mmode.schedule.MaintenanceSchedule;
@@ -33,9 +33,9 @@ public final class CommonClass {
     public static final CommonClass INSTANCE = new CommonClass();
 
     public AtomicBoolean isDirty = new AtomicBoolean(false);
-    private BridgedMinecraftServer mcServer;
-    private Optional<WrappedServerStatus.WrappedFavicon> favicon = Optional.empty();
-    private Optional<WrappedServerStatus.WrappedFavicon> backupIcon = Optional.empty();
+    private CraterGameServer mcServer;
+    private Optional<CraterServerStatus.CraterFavIcon> favicon = Optional.empty();
+    private Optional<CraterServerStatus.CraterFavIcon> backupIcon = Optional.empty();
     public boolean resetOnStartup = false;
     public static final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
@@ -67,7 +67,7 @@ public final class CommonClass {
                     if (message == null || message.isEmpty())
                         message = "Server is currently undergoing maintenance. Please try connecting again later";
 
-                    event.setMessage(ChatUtils.format(message));
+                    event.setMessage(Text.formatted(message));
                 }
             }
         } catch (Exception e) {
@@ -76,10 +76,10 @@ public final class CommonClass {
         }
     }
 
-    private boolean isNotAllowedToJoin(BridgedGameProfile player) {
-        if (!MaintenanceModeConfig.INSTANCE.getAllowedLuckpermsGroups().isEmpty() && ModloaderEnvironment.INSTANCE.isModLoaded("luckperms")) {
+    private boolean isNotAllowedToJoin(CraterGameProfile player) {
+        if (!MaintenanceModeConfig.INSTANCE.getAllowedLuckpermsGroups().isEmpty() && CraterLoader.isModLoaded("luckperms")) {
             for (String group : MaintenanceModeConfig.INSTANCE.getAllowedLuckpermsGroups()) {
-                if (LuckPermsCompat.INSTANCE.hasGroup(player.getId(), group))
+                if (LuckPermsCompat.getInstance().hasGroup(player.getId(), group))
                     return false;
             }
         }
@@ -90,7 +90,7 @@ public final class CommonClass {
     @CraterEventListener
     public void requestFavIconEvent(ServerStatusEvent.FaviconRequestEvent event) {
         try {
-            if (!MaintenanceModeConfig.INSTANCE.isEnabled() && ModloaderEnvironment.INSTANCE.isModLoaded("minimotd")) {
+            if (!MaintenanceModeConfig.INSTANCE.isEnabled() && CraterLoader.isModLoaded("minimotd")) {
                 return;
             }
 
@@ -111,7 +111,7 @@ public final class CommonClass {
            if (MaintenanceModeConfig.INSTANCE.isEnabled()) {
                String message = MaintenanceModeConfig.INSTANCE.getMotd();
                if (message != null && !message.isEmpty())
-                   event.setNewStatus(ChatUtils.format(message));
+                   event.setNewStatus(Text.formatted(message));
            }
        } catch (Exception e) {
            if (MaintenanceModeConfig.INSTANCE.isDebug())
@@ -151,7 +151,7 @@ public final class CommonClass {
         if (mcServer != null) {
             mcServer.getPlayers().forEach(serverPlayer -> {
                 if (isNotAllowedToJoin(serverPlayer.getGameProfile())) {
-                    serverPlayer.disconnect(ChatUtils.format(message));
+                    serverPlayer.disconnect(Text.formatted(message));
                 }
             });
         }
@@ -159,11 +159,11 @@ public final class CommonClass {
 
     public void broadcastMessage(String message) {
         if (mcServer != null) {
-            mcServer.broadcastSystemMessage(ChatUtils.format(message), false);
+            mcServer.broadcastSystemMessage(Text.formatted(message), false);
         }
     }
 
-    private Optional<WrappedServerStatus.WrappedFavicon> loadIcon(File file) {
+    private Optional<CraterServerStatus.CraterFavIcon> loadIcon(File file) {
         try {
             return loadIcon(new FileInputStream(file));
         } catch (Exception e) {
@@ -173,7 +173,7 @@ public final class CommonClass {
         return Optional.empty();
     }
 
-    private Optional<WrappedServerStatus.WrappedFavicon> loadIcon(InputStream inputStream) {
+    private Optional<CraterServerStatus.CraterFavIcon> loadIcon(InputStream inputStream) {
         try {
             BufferedImage bufferedImage = ImageIO.read(inputStream);
             Preconditions.checkState(bufferedImage.getWidth() == 64, "Must be 64 pixels wide");

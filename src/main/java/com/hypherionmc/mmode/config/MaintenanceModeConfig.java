@@ -2,8 +2,9 @@ package com.hypherionmc.mmode.config;
 
 import com.hypherionmc.craterlib.core.config.AbstractConfig;
 import com.hypherionmc.craterlib.core.config.ConfigController;
-import com.hypherionmc.craterlib.core.config.annotations.NoConfigScreen;
 import com.hypherionmc.craterlib.core.config.formats.JsonConfigFormat;
+import com.hypherionmc.craterlib.libs.moonconfig.core.conversion.ObjectConverter;
+import com.hypherionmc.craterlib.libs.moonconfig.core.file.FileConfig;
 import com.hypherionmc.mmode.CommonClass;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,8 +12,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import com.hypherionmc.mmode.ModConstants;
 import org.apache.commons.io.FileUtils;
-import shadow.hypherionmc.moonconfig.core.conversion.ObjectConverter;
-import shadow.hypherionmc.moonconfig.core.file.FileConfig;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,7 +20,6 @@ import java.util.List;
 
 @Getter
 @Setter
-@NoConfigScreen
 public final class MaintenanceModeConfig extends AbstractConfig<MaintenanceModeConfig> {
 
     // DO NOT REMOVE TRANSIENT HERE... OTHERWISE, THE STUPID CONFIG LIBRARY

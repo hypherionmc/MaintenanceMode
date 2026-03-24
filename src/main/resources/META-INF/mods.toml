@@ -40,6 +40,6 @@ side="BOTH"
 [[dependencies.${mod_id}]]
 modId="craterlib"
 mandatory=true
-versionRange="[2.1.0,)"
+versionRange="[3.1.0,)"
 ordering="AFTER"
 side="SERVER"

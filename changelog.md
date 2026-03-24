@@ -1,5 +1,9 @@
 *Requires CraterLib*
 
+**Changes**:
+
+- Support CraterLoader 3.1.0 - Future Hytale Support
+
 **Bug Fixes**:
 
 - Fixed MOTD icon not updating when MiniMOTD is installed

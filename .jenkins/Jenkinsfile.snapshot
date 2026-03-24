@@ -1,10 +1,14 @@
 def projectName = "Maintenance Mode";
 def projectIcon = "https://cdn.modrinth.com/data/QOkEkSap/3470afc6ab2b3cae086df640e0258940f4dd4261.png";
+def JDK = "17";
+def modLoaders = "neoforge|fabric|quilt|forge";
+def supportedMc = "1.18.2|1.19.2|1.20|1.20.1|1.21|1.21.1|1.21.3|1.21.4|1.21.5|1.21.6|1.21.7|1.21.8|1.21.9|1.21.10|1.21.11|26.1";
+def reltype = "snapshot";
 
 pipeline {
     agent {
         docker {
-            image "registry.firstdark.dev/java17:latest"
+            image "registry.firstdark.dev/java${JDK}:latest"
             alwaysPull true
             args '-v gradle-cache:/home/gradle/.gradle'
        }
@@ -15,6 +19,12 @@ pipeline {
    }
 
     stages {
+        stage('Checkout') {
+            steps {
+                scmSkip(deleteBuild: false, skipPattern:'.*\\[ci skip\\].*')
+            }
+        }
+
         stage("Notify Discord") {
             steps {
                 discordSend webhookURL: env.SSS_WEBHOOK,
@@ -28,7 +38,7 @@ pipeline {
         stage("Build") {
             steps {
                 sh "chmod +x ./gradlew"
-                sh "./gradlew clean build -PreleaseType=snapshot"
+                sh "./gradlew clean build publish -PreleaseType=${reltype}"
             }
         }
     }
@@ -42,9 +52,9 @@ pipeline {
                 projectSlug: "mmode",
                 projectName: "${projectName}",
                 projectIcon: "${projectIcon}",
-                modLoaders: "forge|neoforge|fabric|quilt",
-                minecraftVersions: "1.18.2|1.19.2|1.19.3|1.19.4|1.20|1.20.1|1.20.2|1.20.3|1.20.4|1.21|1.21.1|1.21.2|1.21.3|1.21.4|1.21.5|1.21.6|1.21.7|1.21.8",
-                type: "snapshot",
+                modLoaders: "${modLoaders}",
+                minecraftVersions: "${supportedMc}",
+                type: "${reltype}",
                 dependsOn: "required:craterlib",
                 failWebhook: env.SSS_WEBHOOK,
                 publishWebhooks: "${env.SSS_WEBHOOK}|${env.FDD_WH}"

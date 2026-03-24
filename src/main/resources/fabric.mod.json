@@ -17,17 +17,13 @@
     "icon": "assets/mmode/mmode_icon.png",
 
     "environment": "server",
-    "entrypoints": {
-      "server": [
-        "com.hypherionmc.mmode.loaders.fabric.MaintenanceModeFabric"
-      ]
-    },
+    "entrypoints": {},
 
     "depends": {
       "fabricloader": ">=0.14",
       "fabric": "*",
       "minecraft": ">=1.18.2",
-      "craterlib": ">=2.1.0",
+      "craterlib": ">=3.1.0",
       "java": ">=17"
     }
   }

@@ -2,17 +2,17 @@ package com.hypherionmc.mmode.commands;
 
 import com.hypherionmc.craterlib.api.commands.CraterCommand;
 import com.hypherionmc.craterlib.api.events.server.CraterRegisterCommandEvent;
+import com.hypherionmc.craterlib.api.game.authlib.CraterGameProfile;
+import com.hypherionmc.craterlib.api.game.commands.CraterCommandSourceStack;
+import com.hypherionmc.craterlib.api.game.text.Text;
 import com.hypherionmc.craterlib.core.event.CraterEventBus;
-import com.hypherionmc.craterlib.nojang.authlib.BridgedGameProfile;
-import com.hypherionmc.craterlib.nojang.commands.BridgedCommandSourceStack;
 import com.hypherionmc.mmode.api.events.MaintenanceModeEvent;
 import com.hypherionmc.mmode.schedule.MaintenanceSchedule;
 import com.hypherionmc.mmode.CommonClass;
 import com.hypherionmc.mmode.ModConstants;
 import com.hypherionmc.mmode.config.MaintenanceModeConfig;
 import com.hypherionmc.mmode.util.BackupUtil;
-import shadow.kyori.adventure.text.Component;
-import shadow.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -52,14 +52,14 @@ public class MaintenanceModeCommand {
         event.registerCommand(cmd);
     }
 
-    private static int scheduleTillRestart(BridgedCommandSourceStack stack) {
+    private static int scheduleTillRestart(CraterCommandSourceStack stack) {
         CommonClass.INSTANCE.resetOnStartup = true;
         changeStatus(stack, true);
-        stack.sendSuccess(() -> Component.text("Maintenance is enabled until restart"), false);
+        stack.sendSuccess(() -> Text.literal("Maintenance is enabled until restart"), false);
         return 1;
     }
 
-    private static int scheduleStart(BridgedCommandSourceStack stack, String value) {
+    private static int scheduleStart(CraterCommandSourceStack stack, String value) {
         MaintenanceModeConfig.INSTANCE.getSchedule().setStartTime(value);
         CommonClass.INSTANCE.isDirty.set(true);
         MaintenanceSchedule.INSTANCE.initScheduler();
@@ -70,11 +70,11 @@ public class MaintenanceModeCommand {
             ModConstants.LOG.error("Failed to save config", e);
         }
 
-        stack.sendSuccess(() -> Component.text("Maintenance start schedule is set to " + value), false);
+        stack.sendSuccess(() -> Text.literal("Maintenance start schedule is set to " + value), false);
         return 1;
     }
 
-    private static int scheduleEnd(BridgedCommandSourceStack stack, String value) {
+    private static int scheduleEnd(CraterCommandSourceStack stack, String value) {
         MaintenanceModeConfig.INSTANCE.getSchedule().setEndTime(value);
         CommonClass.INSTANCE.isDirty.set(true);
         MaintenanceSchedule.INSTANCE.initScheduler();
@@ -85,22 +85,22 @@ public class MaintenanceModeCommand {
             ModConstants.LOG.error("Failed to save config", e);
         }
 
-        stack.sendSuccess(() -> Component.text("Maintenance end schedule is set to " + value), false);
+        stack.sendSuccess(() -> Text.literal("Maintenance end schedule is set to " + value), false);
         return 1;
     }
 
-    private static int doBackup(BridgedCommandSourceStack source) {
+    private static int doBackup(CraterCommandSourceStack source) {
         try {
-            source.sendSuccess(() -> Component.text("Starting Maintenance Mode Backup"), false);
+            source.sendSuccess(() -> Text.literal("Starting Maintenance Mode Backup"), false);
             BackupUtil.createBackup();
         } catch (Exception e) {
             ModConstants.LOG.error("Failed to create server backup: {}", e.getMessage());
-            source.sendFailure(Component.text("Failed to create Server backup. Please check your server log"));
+            source.sendFailure(Text.literal("Failed to create Server backup. Please check your server log"));
         }
         return 1;
     }
 
-    private static int changeBackups(BridgedCommandSourceStack stack, boolean enabled) {
+    private static int changeBackups(CraterCommandSourceStack stack, boolean enabled) {
         if (MaintenanceModeConfig.INSTANCE == null) {
             new MaintenanceModeConfig();
         }
@@ -108,21 +108,21 @@ public class MaintenanceModeCommand {
         MaintenanceModeConfig.INSTANCE.setDoBackup(enabled);
         saveConfig(stack);
 
-        stack.sendSuccess(() -> Component.text("Maintenance Mode Backups: ").append(Component.text((enabled ? "Enabled" : "Disabled")).color(NamedTextColor.YELLOW)), false);
+        stack.sendSuccess(() -> Text.literal("Maintenance Mode Backups: ").append(Text.literal((enabled ? "Enabled" : "Disabled")).color(NamedTextColor.YELLOW)), false);
         CommonClass.INSTANCE.isDirty.set(true);
         return 1;
     }
 
-    private static int checkStatus(BridgedCommandSourceStack stack) {
+    private static int checkStatus(CraterCommandSourceStack stack) {
         if (MaintenanceModeConfig.INSTANCE != null) {
-            stack.sendSuccess(() -> Component.text("Maintenance Mode: ").append(Component.text((MaintenanceModeConfig.INSTANCE.isEnabled() ? "Enabled" : "Disabled")).color(NamedTextColor.YELLOW)), false);
+            stack.sendSuccess(() -> Text.literal("Maintenance Mode: ").append(Text.literal((MaintenanceModeConfig.INSTANCE.isEnabled() ? "Enabled" : "Disabled")).color(NamedTextColor.YELLOW)), false);
         } else {
-            stack.sendFailure(Component.text("Maintenance Mode: Failed to load config"));
+            stack.sendFailure(Text.literal("Maintenance Mode: Failed to load config"));
         }
         return 1;
     }
 
-    public static int listAllowedUsers(BridgedCommandSourceStack stack) {
+    public static int listAllowedUsers(CraterCommandSourceStack stack) {
         if (MaintenanceModeConfig.INSTANCE == null) {
             new MaintenanceModeConfig();
         }
@@ -145,12 +145,12 @@ public class MaintenanceModeCommand {
         }
 
         String finalReturnS = returnS;
-        stack.sendSuccess(() -> Component.text(finalReturnS), false);
+        stack.sendSuccess(() -> Text.literal(finalReturnS), false);
 
         return 1;
     }
 
-    private static int changeStatus(BridgedCommandSourceStack stack, boolean enabled) {
+    private static int changeStatus(CraterCommandSourceStack stack, boolean enabled) {
         if (MaintenanceModeConfig.INSTANCE == null) {
             new MaintenanceModeConfig();
         }
@@ -171,11 +171,11 @@ public class MaintenanceModeCommand {
 
             }
         } catch (Exception e) {
-            stack.sendFailure(Component.text("Failed to save config. Please see server log"));
+            stack.sendFailure(Text.literal("Failed to save config. Please see server log"));
             ModConstants.LOG.error("Failed to save config: {}", e.getMessage());
         }
 
-        stack.sendSuccess(() -> Component.text("Maintenance Mode: ").append(Component.text((MaintenanceModeConfig.INSTANCE.isEnabled() ? "Enabled" : "Disabled")).color(NamedTextColor.YELLOW)), false);
+        stack.sendSuccess(() -> Text.literal("Maintenance Mode: ").append(Text.literal((MaintenanceModeConfig.INSTANCE.isEnabled() ? "Enabled" : "Disabled")).color(NamedTextColor.YELLOW)), false);
         CommonClass.INSTANCE.isDirty.set(true);
 
         if (enabled) {
@@ -187,40 +187,40 @@ public class MaintenanceModeCommand {
         return 1;
     }
 
-    private static int reload(BridgedCommandSourceStack stack) {
+    private static int reload(CraterCommandSourceStack stack) {
         new MaintenanceModeConfig(true);
-        stack.sendSuccess(() -> Component.text("Config Reloaded"), false);
+        stack.sendSuccess(() -> Text.literal("Config Reloaded"), false);
         CommonClass.INSTANCE.isDirty.set(true);
         MaintenanceSchedule.INSTANCE.initScheduler();
         return 1;
     }
 
-    private static int addAllowedPlayer(BridgedCommandSourceStack stack, Collection<BridgedGameProfile> gameProfiles)  {
+    private static int addAllowedPlayer(CraterCommandSourceStack stack, Collection<? extends CraterGameProfile> gameProfiles)  {
         if (MaintenanceModeConfig.INSTANCE == null) {
             new MaintenanceModeConfig();
         }
 
         List<MaintenanceModeConfig.AllowedUser> allowedUsers = MaintenanceModeConfig.INSTANCE.getAllowedUsers().isEmpty() ? new ArrayList<>() : MaintenanceModeConfig.INSTANCE.getAllowedUsers();
 
-        for (BridgedGameProfile profile : gameProfiles) {
+        for (CraterGameProfile profile : gameProfiles) {
             if (allowedUsers.stream().noneMatch(allowedUser -> allowedUser.getUuid().equals(profile.getId().toString()))) {
                 MaintenanceModeConfig.AllowedUser allowedUser = new MaintenanceModeConfig.AllowedUser(profile.getName(), profile.getId().toString());
                 allowedUsers.add(allowedUser);
             } else {
-                stack.sendFailure(Component.text("User already in allowed list"));
+                stack.sendFailure(Text.literal("User already in allowed list"));
                 
             }
         }
 
         MaintenanceModeConfig.INSTANCE.setAllowedUsers(allowedUsers);
-        stack.sendSuccess(() -> Component.text("User added to allowed list"), false);
+        stack.sendSuccess(() -> Text.literal("User added to allowed list"), false);
 
         saveConfig(stack);
         CommonClass.INSTANCE.isDirty.set(true);
         return 1;
     }
 
-    private static int addAllowedPlayer(BridgedCommandSourceStack stack, String lpGroup)  {
+    private static int addAllowedPlayer(CraterCommandSourceStack stack, String lpGroup)  {
         if (MaintenanceModeConfig.INSTANCE == null) {
             new MaintenanceModeConfig();
         }
@@ -230,32 +230,32 @@ public class MaintenanceModeCommand {
         if (allowedUsers.stream().noneMatch(allowedUser -> allowedUser.equalsIgnoreCase(lpGroup))) {
             allowedUsers.add(lpGroup);
         } else {
-            stack.sendFailure(Component.text("Group already in allowed list"));
+            stack.sendFailure(Text.literal("Group already in allowed list"));
 
         }
 
         MaintenanceModeConfig.INSTANCE.setAllowedLuckpermsGroups(allowedUsers);
-        stack.sendSuccess(() -> Component.text("Group added to allowed list"), false);
+        stack.sendSuccess(() -> Text.literal("Group added to allowed list"), false);
 
         saveConfig(stack);
         CommonClass.INSTANCE.isDirty.set(true);
         return 1;
     }
 
-    private static int removeAllowedPlayer(BridgedCommandSourceStack stack, Collection<BridgedGameProfile> gameProfiles) {
+    private static int removeAllowedPlayer(CraterCommandSourceStack stack, Collection<? extends CraterGameProfile> gameProfiles) {
         if (MaintenanceModeConfig.INSTANCE == null) {
             new MaintenanceModeConfig();
         }
 
         List<MaintenanceModeConfig.AllowedUser> allowedUsers = MaintenanceModeConfig.INSTANCE.getAllowedUsers().isEmpty() ? new ArrayList<>() : MaintenanceModeConfig.INSTANCE.getAllowedUsers();
 
-        for (BridgedGameProfile profile : gameProfiles) {
+        for (CraterGameProfile profile : gameProfiles) {
             Optional<MaintenanceModeConfig.AllowedUser> allowedUserOptional = allowedUsers.stream().filter(allowedUser -> allowedUser.getUuid().equals(profile.getId().toString())).findFirst();
 
             if (allowedUserOptional.isPresent()) {
                 allowedUsers.remove(allowedUserOptional.get());
             } else {
-                stack.sendFailure(Component.text("User not found in allowed list"));
+                stack.sendFailure(Text.literal("User not found in allowed list"));
                 return 1;
             }
         }
@@ -263,12 +263,12 @@ public class MaintenanceModeCommand {
         MaintenanceModeConfig.INSTANCE.setAllowedUsers(allowedUsers);
         saveConfig(stack);
         CommonClass.INSTANCE.isDirty.set(true);
-        stack.sendSuccess(() -> Component.text("User removed from allowed list"), false);
+        stack.sendSuccess(() -> Text.literal("User removed from allowed list"), false);
         CommonClass.INSTANCE.kickAllPlayers(MaintenanceModeConfig.INSTANCE.getMessage());
         return 1;
     }
 
-    private static int removeAllowedPlayer(BridgedCommandSourceStack stack, String lpGroup) {
+    private static int removeAllowedPlayer(CraterCommandSourceStack stack, String lpGroup) {
         if (MaintenanceModeConfig.INSTANCE == null) {
             new MaintenanceModeConfig();
         }
@@ -279,31 +279,31 @@ public class MaintenanceModeCommand {
         if (allowedUserOptional.isPresent()) {
             allowedUsers.remove(allowedUserOptional.get());
         } else {
-            stack.sendFailure(Component.text("Group not found in allowed list"));
+            stack.sendFailure(Text.literal("Group not found in allowed list"));
             return 1;
         }
 
         MaintenanceModeConfig.INSTANCE.setAllowedLuckpermsGroups(allowedUsers);
-        stack.sendSuccess(() -> Component.text("Group removed from allowed list"), false);
+        stack.sendSuccess(() -> Text.literal("Group removed from allowed list"), false);
         saveConfig(stack);
         CommonClass.INSTANCE.isDirty.set(true);
         CommonClass.INSTANCE.kickAllPlayers(MaintenanceModeConfig.INSTANCE.getMessage());
         return 1;
     }
 
-    private static void saveConfig(BridgedCommandSourceStack stack) {
+    private static void saveConfig(CraterCommandSourceStack stack) {
         try {
             MaintenanceModeConfig.INSTANCE.saveConfig(MaintenanceModeConfig.INSTANCE);
         } catch (Exception e) {
-            stack.sendFailure(Component.text("Failed to save config. Please see server log"));
+            stack.sendFailure(Text.literal("Failed to save config. Please see server log"));
             ModConstants.LOG.error("Failed to save config: {}", e.getMessage());
         }
 
-        stack.sendSuccess(() -> Component.text("Updated config"), false);
+        stack.sendSuccess(() -> Text.literal("Updated config"), false);
         CommonClass.INSTANCE.isDirty.set(true);
     }
 
-    private static int setMessage(BridgedCommandSourceStack stack, String message) {
+    private static int setMessage(CraterCommandSourceStack stack, String message) {
         if (MaintenanceModeConfig.INSTANCE == null) {
             new MaintenanceModeConfig();
         }
@@ -314,7 +314,7 @@ public class MaintenanceModeCommand {
         return 1;
     }
 
-    private static int setMotd(BridgedCommandSourceStack stack, String message) {
+    private static int setMotd(CraterCommandSourceStack stack, String message) {
         if (MaintenanceModeConfig.INSTANCE == null) {
             new MaintenanceModeConfig();
         }
